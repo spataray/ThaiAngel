@@ -185,7 +185,6 @@
                const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
                const dayText = currentLang === 'en' ? 'Day' : 'วัน';
                yearSelect.innerHTML = `<option value="" selected disabled>${yearText}</option>`;
-               // --- THIS IS THE MODIFIED LINE ---
                for (let i = cutoffYear; i >= today.getFullYear() - 100; i--) {
                    yearSelect.add(new Option(i, i));
                }
@@ -202,13 +201,12 @@
            function handleYearChange() {
                const year = parseInt(yearSelect.value);
                resetMonthAndDay();
-               // Simplified logic since invalid future years are gone
                if (year < cutoffYear) {
                    setApproved();
-                   populateMonths(11); // All 12 months are valid
-               } else { // Year is the cutoff year
+                   populateMonths(11);
+               } else {
                    resetUI();
-                   populateMonths(cutoffMonth); // Only populate up to the current month
+                   populateMonths(cutoffMonth);
                }
            }
            function handleMonthChange() {
@@ -220,7 +218,7 @@
                    populateDays(year, month, cutoffDay);
                } else {
                    underageFlag.style.opacity = '0';
-                   populateDays(year, month, 31); // All days in month are valid
+                   populateDays(year, month, 31);
                }
                handleDayChange();
            }
@@ -244,11 +242,14 @@
                    setDenied();
                }
            }
+           // --- THIS FUNCTION IS UPDATED ---
            function populateMonths(lastAllowedMonth) {
                resetMonthAndDay();
                const names = monthNames[currentLang];
                for (let i = 0; i <= lastAllowedMonth; i++) {
-                   monthSelect.add(new Option(names[i], i));
+                   const monthNumber = String(i + 1).padStart(2, '0');
+                   const optionText = `${monthNumber}-${names[i]}`;
+                   monthSelect.add(new Option(optionText, i));
                }
                monthSelect.disabled = false;
            }
