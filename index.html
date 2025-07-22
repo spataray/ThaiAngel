@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Verifier / เครื่องมือตรวจสอบอายุ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background-color: #f4f7f9;
+            --container-color: #ffffff;
+            --text-color: #333;
+            --primary-color: #007bff;
+            --approved-color: #28a745;
+            --denied-color: #dc3545;
+            --neutral-color: #e9ecef;
+            --border-color: #ced4da;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Poppins', 'Sarabun', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .verifier-container {
+            padding: 2rem;
+            background-color: var(--container-color);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .lang-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            font-weight: 600;
+        }
+
+        .lang-btn.active {
+            color: var(--primary-color);
+            opacity: 1;
+        }
+        
+        h1 {
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        #cutoff-date-display {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #6c757d;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        p.instructions {
+            margin-bottom: 1.5rem;
+            color: #6c757d;
+        }
+
+        .date-selector {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .date-wheel {
+            font-size: 1.1rem;
+            font-family: 'Poppins', 'Sarabun', sans-serif;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+        
+        .date-wheel:disabled {
+            background-color: #f8f9fa;
+        }
+
+        .result-display {
+            padding: 2rem;
+            border-radius: 16px;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            background-color: var(--neutral-color);
+            transition: background-color 0.4s ease, transform 0.2s ease;
+            transform: scale(1);
+        }
+
+        .approved {
+            background-color: var(--approved-color);
+            transform: scale(1.03);
+        }
+
+        .denied {
+            background-color: var(--denied-color);
+            transform: scale(1.03);
+        }
+
+        .th { display: none; }
+        .lang-en .en { display: inline; }
+        .lang-en .th { display: none; }
+        .lang-th .th { display: inline; }
+        .lang-th .en { display: none; }
+        
+    </style>
+</head>
+<body class="lang-en">
+    <div class="verifier-container">
+        <div class="lang-switcher">
+            <button id="lang-en-btn" class="lang-btn active">EN</button>
+            <span style="opacity:0.5">|</span>
+            <button id="lang-th-btn" class="lang-btn">TH</button>
+        </div>
+
+        <h1>
+            <span class="en">Age Verifier</span>
+            <span class="th">เครื่องมือตรวจสอบอายุ</span>
+        </h1>
+        <h2 id="cutoff-date-display"></h2>
+        <p class="instructions">
+            <span class="en">Select the customer's date of birth.</span>
+            <span class="th">กรุณาเลือกวันเกิดของลูกค้า</span>
+        </p>
+        
+        <div class="date-selector">
+            <select id="month-year-select" class="date-wheel"></select>
+            <select id="day-select" class="date-wheel"></select>
+        </div>
+
+        <div id="result" class="result-display"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const enBtn = document.getElementById('lang-en-btn');
+            const thBtn = document.getElementById('lang-th-btn');
+            const cutoffDateDisplay = document.getElementById('cutoff-date-display');
+            const monthYearSelect = document.getElementById('month-year-select');
+            const daySelect = document.getElementById('day-select');
+            const resultDiv = document.getElementById('result');
+
+            const today = new Date();
+            const cutoffYear = today.getFullYear() - 21;
+            const cutoffMonth = today.getMonth(); // 0-indexed
+            const cutoffDay = today.getDate();
+
+            const monthNames = {
+                en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                th: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
+            };
+
+            let currentLang = 'en';
+
+            const clickSound = new Audio("data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGliAvTRqP8gD/Maj8eTvoa5BASSB2YRBm2G5g5YTTOgdOFY4eD5cHIu7hS+GGgbR9G4oYV2Q+jseeC3v3m1q1xQk+t7vL2bXfbmO2q5qrX2r+xeaOa1/bN72wpaTfve5y5x8eXfve6d9ve5x/a+fve69/ve5g+zXfve6d9ve7m+zXfve6d9/ve7m+zXfve6d+ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6d9/ve7m+zXfve6tAAD/8AESExUAFRUVA1M5L1Y0I0hTNS9WMiNIUzUvVjQjSFI1L1Y0I0hNNi9WMiNLSjUvVjQjSEk1L1Y0I0hLNTRTO1I1L1Y0I0hLNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0hNNTdTO1I1L1Y0I0h-");
+            clickSound.volume = 0.5;
+
+            function playClick() {
+                clickSound.currentTime = 0;
+                clickSound.play().catch(e => console.error("Audio play failed:", e));
+            }
+
+            enBtn.addEventListener('click', () => setLanguage('en'));
+            thBtn.addEventListener('click', () => setLanguage('th'));
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                body.className = `lang-${lang}`;
+                enBtn.classList.toggle('active', lang === 'en');
+                thBtn.classList.toggle('active', lang === 'th');
+                const selectedValue = monthYearSelect.value; // Save current selection
+                updateCutoffDateDisplay();
+                initialSetup(selectedValue); 
+            }
+            
+            function updateCutoffDateDisplay() {
+                const enText = `Legal if born on or before: ${monthNames.en[cutoffMonth]} ${cutoffDay}, ${cutoffYear}`;
+                const thText = `ซื้อได้หากเกิดในหรือก่อนวันที่: ${cutoffDay} ${monthNames.th[cutoffMonth]} ${cutoffYear + 543}`;
+                cutoffDateDisplay.innerHTML = `<span class="en">${enText}</span><span class="th">${thText}</span>`;
+            }
+
+            function initialSetup(selectedValue) {
+                // --- THIS FUNCTION IS CORRECTED ---
+                monthYearSelect.innerHTML = ''; // Clear existing options
+                const startYear = cutoffYear + 5; // e.g., 2004 + 5 = 2009
+                const endYear = today.getFullYear() - 100;
+                const names = monthNames[currentLang];
+
+                for (let year = startYear; year >= endYear; year--) {
+                    for (let month = 11; month >= 0; month--) { // 11=Dec, 0=Jan
+                        const monthNum = String(month + 1).padStart(2, '0');
+                        const displayYear = (currentLang === 'th') ? year + 543 : year;
+                        const optionText = `${displayYear}-${monthNum}-${names[month]}`;
+                        const optionValue = `${year}-${month}`;
+                        
+                        const option = document.createElement('option');
+                        option.value = optionValue;
+                        option.textContent = optionText; // Use textContent for dropdown options
+                        monthYearSelect.add(option);
+                    }
+                }
+                
+                const cutoffValue = selectedValue || `${cutoffYear}-${cutoffMonth}`;
+                monthYearSelect.value = cutoffValue;
+                handleMonthYearChange();
+            }
+
+            monthYearSelect.addEventListener('change', handleMonthYearChange);
+            daySelect.addEventListener('change', handleDayChange);
+
+            function handleMonthYearChange() {
+                playClick();
+                const [year, month] = monthYearSelect.value.split('-').map(Number);
+
+                if (year > cutoffYear || (year === cutoffYear && month > cutoffMonth)) {
+                    setDenied();
+                    daySelect.disabled = true;
+                    daySelect.innerHTML = '';
+                } else if (year < cutoffYear || (year === cutoffYear && month < cutoffMonth)) {
+                    setApproved();
+                    populateDays(year, month, 31);
+                } else { // Exactly the cutoff month/year
+                    resetUI();
+                    populateDays(year, month, cutoffDay);
+                }
+            }
+
+            function handleDayChange() {
+                playClick();
+                const [year, month] = monthYearSelect.value.split('-').map(Number);
+                const day = parseInt(daySelect.value);
+
+                if (isNaN(day)) {
+                    resetUI();
+                    return;
+                }
+
+                if (year < cutoffYear || 
+                   (year === cutoffYear && month < cutoffMonth) ||
+                   (year === cutoffYear && month === cutoffMonth && day <= cutoffDay)) {
+                    setApproved();
+                } else {
+                    setDenied();
+                }
+            }
+            
+            function populateDays(year, month, lastAllowedDay) {
+                const dayText = currentLang === 'en' ? 'Day' : 'วัน';
+                daySelect.innerHTML = `<option value="" selected disabled>${dayText}</option>`;
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const limit = Math.min(daysInMonth, lastAllowedDay);
+
+                for (let i = 1; i <= limit; i++) {
+                    daySelect.add(new Option(i, i));
+                }
+                daySelect.disabled = false;
+            }
+
+            function setApproved() {
+                resultDiv.className = 'result-display approved';
+                const text = currentLang === 'en' ? 'APPROVED ✅' : 'ผ่าน ✅';
+                resultDiv.innerHTML = text;
+            }
+
+            function setDenied() {
+                resultDiv.className = 'result-display denied';
+                const enText = `UNDERAGE`;
+                const thText = `อายุไม่ถึง`;
+                resultDiv.innerHTML = `<span class="en">${enText}</span><span class="th">${thText}</span>`;
+            }
+            
+            function resetUI() {
+                resultDiv.className = 'result-display';
+                resultDiv.innerHTML = '';
+            }
+            
+            // Initial Load
+            updateCutoffDateDisplay();
+            initialSetup(null);
+        });
+    </script>
+</body>
+</html>
