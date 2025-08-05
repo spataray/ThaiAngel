@@ -6,7 +6,7 @@
 <title>Age Verifier / เครื่องมือตรวจสอบอายุ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel-stylesheet">
 <style>
        :root {
            --background-color: #f4f7f9;
@@ -78,10 +78,20 @@
            margin-bottom: 2rem;
            color: #6c757d;
        }
+       .verbiage-container {
+           font-size: 1rem;
+           transition: font-size 0.3s;
+       }
+       .verbiage-container.large {
+           font-size: 1.25rem;
+       }
+       .verbiage-container.extra-large {
+           font-size: 1.5rem;
+       }
        .important-text {
            font-weight: 600;
-           margin-bottom: 1rem;
            color: var(--denied-color);
+           margin-bottom: 1rem;
        }
        .date-selector {
            display: flex;
@@ -111,12 +121,6 @@
            transition: background-color 0.4s ease, transform 0.2s ease;
            transform: scale(1);
        }
-       .result-display.large {
-           font-size: 3.5rem;
-       }
-       .result-display.extra-large {
-           font-size: 4.5rem;
-       }
        .approved {
            background-color: var(--approved-color);
            transform: scale(1.03);
@@ -124,6 +128,11 @@
        .denied {
            background-color: var(--denied-color);
            transform: scale(1.03);
+       }
+       .photo-confirm-text {
+           font-weight: 600;
+           color: var(--approved-color);
+           margin-bottom: 1rem;
        }
        /* Language Display Logic */
        .th { display: none; }
@@ -152,12 +161,18 @@
 <span class="en">Age Verifier</span>
 <span class="th">เครื่องมือตรวจสอบอายุ</span>
 </h1>
+<div class="verbiage-container" id="verbiage-container">
+<p class="photo-confirm-text">
+<span class="en">Confirm picture matches the customer.</span>
+<span class="th">ยืนยันรูปภาพตรงกับลูกค้า</span>
+</p>
 <p class="important-text" id="legal-date-text">
 </p>
 <p>
 <span class="en">Select the customer's date of birth.</span>
 <span class="th">กรุณาเลือกวันเกิดของลูกค้า</span>
 </p>
+</div>
 <div class="date-selector">
 <select id="year-select" class="date-wheel"></select>
 <select id="month-select" class="date-wheel"></select>
@@ -165,10 +180,6 @@
 </div>
 <div id="result" class="result-display">
 </div>
-<p style="margin-top: 1rem; font-size: 0.9rem;">
-<span class="en">Confirm picture matches the customer.</span>
-<span class="th">ยืนยันรูปภาพตรงกับลูกค้า</span>
-</p>
 </div>
 <script>
        document.addEventListener('DOMContentLoaded', () => {
@@ -177,12 +188,14 @@
            const thBtn = document.getElementById('lang-th-btn');
            const fontSizeSelect = document.getElementById('font-size-select');
            const legalDateText = document.getElementById('legal-date-text');
+           const verbiageContainer = document.getElementById('verbiage-container');
            const yearSelect = document.getElementById('year-select');
            const monthSelect = document.getElementById('month-select');
            const daySelect = document.getElementById('day-select');
            const resultDiv = document.getElementById('result');
-           
-           const today = new Date('2025-08-04T08:47:36');
+
+           // Current time is Monday, August 4, 2025 at 10:06:22 PM HST.
+           const today = new Date('2025-08-04T10:06:22');
            const cutoffYear = today.getFullYear() - 21;
            const cutoffMonth = today.getMonth();
            const cutoffDay = today.getDate();
@@ -206,7 +219,7 @@
 
            // --- FONT SIZE SWITCHER ---
            fontSizeSelect.addEventListener('change', (e) => {
-               resultDiv.className = `result-display ${e.target.value} ${resultDiv.classList.contains('approved') ? 'approved' : ''} ${resultDiv.classList.contains('denied') ? 'denied' : ''}`;
+               verbiageContainer.className = `verbiage-container ${e.target.value}`;
            });
            
            // --- INITIALIZATION ---
@@ -225,13 +238,16 @@
                `;
                
                // Populate year dropdown defaulting to cutoffYear
-               yearSelect.innerHTML = `<option value="" selected disabled>${yearText}</option>`;
+               yearSelect.innerHTML = `<option value="" disabled>${yearText}</option>`;
                for (let i = today.getFullYear(); i >= 1920; i--) {
                    const option = new Option(i, i);
+                   if (i === cutoffYear) {
+                       option.selected = true;
+                   }
                    yearSelect.add(option);
                }
                
-               // Populate months and days
+               // Populate months and days defaulting to cutoffMonth
                populateMonths();
                populateDays();
                
@@ -252,9 +268,15 @@
                
                // Enable/disable day dropdown based on month selection
                daySelect.disabled = isNaN(month);
-               
-               // Instant feedback on year/month change
-               if (isNaN(year) || (year > cutoffYear)) {
+
+               // If year is not selected, reset UI
+               if (isNaN(year)) {
+                   setNeutral();
+                   return;
+               }
+
+               // Instant feedback based on year selection
+               if (year > cutoffYear) {
                    setDenied();
                    return;
                }
@@ -266,7 +288,11 @@
                
                // If year is the cutoff year, check month
                if (year === cutoffYear) {
-                   if (isNaN(month) || (month > cutoffMonth)) {
+                   if (isNaN(month)) {
+                       setNeutral();
+                       return;
+                   }
+                   if (month > cutoffMonth) {
                        setDenied();
                        return;
                    }
@@ -286,18 +312,22 @@
                    return;
                }
                
-               // Default to neutral if nothing is selected
+               // Default to neutral if no day is selected for the cutoff month
                setNeutral();
            }
            
            // --- HELPER & UI FUNCTIONS ---
            function populateMonths() {
                const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
-               monthSelect.innerHTML = `<option value="" selected disabled>${monthText}</option>`;
+               monthSelect.innerHTML = `<option value="" disabled>${monthText}</option>`;
                for (let i = 0; i < 12; i++) {
                    const monthStr = (i + 1).toString().padStart(2, '0');
                    const optionText = `${monthStr}-${monthNames.en[i]}`;
-                   monthSelect.add(new Option(optionText, i));
+                   const option = new Option(optionText, i);
+                   if (i === cutoffMonth) {
+                       option.selected = true;
+                   }
+                   monthSelect.add(option);
                }
                monthSelect.disabled = false;
            }
@@ -317,17 +347,17 @@
            }
            
            function setApproved() {
-               resultDiv.className = `result-display ${fontSizeSelect.value} approved`;
+               resultDiv.className = 'result-display approved';
                resultDiv.textContent = 'APPROVED';
            }
            
            function setDenied() {
-               resultDiv.className = `result-display ${fontSizeSelect.value} denied`;
+               resultDiv.className = 'result-display denied';
                resultDiv.textContent = 'UNDERAGE';
            }
            
            function setNeutral() {
-               resultDiv.className = `result-display ${fontSizeSelect.value}`;
+               resultDiv.className = 'result-display';
                resultDiv.textContent = '';
            }
            
