@@ -216,8 +216,8 @@
            const daySelect = document.getElementById('day-select');
            const resultDiv = document.getElementById('result');
 
-           // Current time is Monday, August 4, 2025 at 10:18:15 PM HST.
-           const today = new Date('2025-08-04T10:18:15');
+           // Current time is Monday, August 4, 2025 at 10:37:00 PM HST.
+           const today = new Date('2025-08-04T10:37:00');
            const cutoffYear = today.getFullYear() - 21;
            const cutoffMonth = today.getMonth();
            const cutoffDay = today.getDate();
@@ -331,8 +331,8 @@
                    return;
                }
                
-               // Default to neutral if no day is selected for the cutoff month
-               setNeutral();
+               // Default to approved if valid year and month are selected, but day is not
+               setApproved();
            }
            
            // --- HELPER & UI FUNCTIONS ---
@@ -362,11 +362,7 @@
                
                const daysInMonth = new Date(year, month + 1, 0).getDate();
                for (let i = 1; i <= daysInMonth; i++) {
-                   const option = new Option(i, i);
-                   if (year === cutoffYear && month === cutoffMonth && i === cutoffDay) {
-                      option.selected = true;
-                   }
-                   daySelect.add(option);
+                   daySelect.add(new Option(i, i));
                }
            }
            
