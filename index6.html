@@ -216,8 +216,8 @@
            const daySelect = document.getElementById('day-select');
            const resultDiv = document.getElementById('result');
 
-           // Current time is Monday, August 4, 2025 at 10:37:00 PM HST.
-           const today = new Date('2025-08-04T10:37:00');
+           // Current time is Monday, August 4, 2025 at 10:45:00 PM HST.
+           const today = new Date('2025-08-04T10:45:00');
            const cutoffYear = today.getFullYear() - 21;
            const cutoffMonth = today.getMonth();
            const cutoffDay = today.getDate();
@@ -289,7 +289,7 @@
                daySelect.disabled = isNaN(month);
 
                // If year is not selected, reset UI
-               if (isNaN(year)) {
+               if (isNaN(year) || isNaN(month) || isNaN(day)) {
                    setNeutral();
                    return;
                }
@@ -307,10 +307,6 @@
                
                // If year is the cutoff year, check month
                if (year === cutoffYear) {
-                   if (isNaN(month)) {
-                       setNeutral();
-                       return;
-                   }
                    if (month > cutoffMonth) {
                        setDenied();
                        return;
@@ -323,16 +319,13 @@
                
                // If year and month are the cutoff, check day
                if (year === cutoffYear && month === cutoffMonth) {
-                   if (isNaN(day) || day > cutoffDay) {
+                   if (day > cutoffDay) {
                        setDenied();
                    } else {
                        setApproved();
                    }
                    return;
                }
-               
-               // Default to approved if valid year and month are selected, but day is not
-               setApproved();
            }
            
            // --- HELPER & UI FUNCTIONS ---
