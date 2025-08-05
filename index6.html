@@ -6,7 +6,7 @@
 <title>Age Verifier / เครื่องมือตรวจสอบอายุ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel-stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
 <style>
        :root {
            --background-color: #f4f7f9;
@@ -93,10 +93,28 @@
            color: var(--denied-color);
            margin-bottom: 1rem;
        }
+       .photo-confirm-text {
+           font-weight: 600;
+           color: var(--approved-color);
+           margin-bottom: 1rem;
+       }
        .date-selector {
            display: flex;
            gap: 0.5rem;
            margin-bottom: 2rem;
+       }
+       .date-input-group {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           flex: 1;
+       }
+       .date-label {
+           font-size: 0.8rem;
+           font-weight: 600;
+           margin-bottom: 0.25rem;
+           text-transform: uppercase;
+           color: #6c757d;
        }
        .date-wheel {
            font-size: 1.1rem;
@@ -128,11 +146,6 @@
        .denied {
            background-color: var(--denied-color);
            transform: scale(1.03);
-       }
-       .photo-confirm-text {
-           font-weight: 600;
-           color: var(--approved-color);
-           margin-bottom: 1rem;
        }
        /* Language Display Logic */
        .th { display: none; }
@@ -174,9 +187,18 @@
 </p>
 </div>
 <div class="date-selector">
+<div class="date-input-group">
+<label class="date-label"><span class="en">Year</span><span class="th">ปี</span></label>
 <select id="year-select" class="date-wheel"></select>
+</div>
+<div class="date-input-group">
+<label class="date-label"><span class="en">Month</span><span class="th">เดือน</span></label>
 <select id="month-select" class="date-wheel"></select>
+</div>
+<div class="date-input-group">
+<label class="date-label"><span class="en">Day</span><span class="th">วัน</span></label>
 <select id="day-select" class="date-wheel"></select>
+</div>
 </div>
 <div id="result" class="result-display">
 </div>
@@ -194,14 +216,15 @@
            const daySelect = document.getElementById('day-select');
            const resultDiv = document.getElementById('result');
 
-           // Current time is Monday, August 4, 2025 at 10:06:22 PM HST.
-           const today = new Date('2025-08-04T10:06:22');
+           // Current time is Monday, August 4, 2025 at 10:18:15 PM HST.
+           const today = new Date('2025-08-04T10:18:15');
            const cutoffYear = today.getFullYear() - 21;
            const cutoffMonth = today.getMonth();
            const cutoffDay = today.getDate();
            
            const monthNames = {
                en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+               th: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
            };
            let currentLang = 'en';
            
@@ -224,10 +247,6 @@
            
            // --- INITIALIZATION ---
            function initialSetup() {
-               const yearText = currentLang === 'en' ? 'Year' : 'ปี';
-               const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
-               const dayText = currentLang === 'en' ? 'Day' : 'วัน';
-               
                // Set the legal date verbiage
                const cutoffDateFormatted = new Date(cutoffYear, cutoffMonth, cutoffDay).toLocaleDateString('en-US', {
                    year: 'numeric', month: 'long', day: 'numeric'
@@ -238,7 +257,7 @@
                `;
                
                // Populate year dropdown defaulting to cutoffYear
-               yearSelect.innerHTML = `<option value="" disabled>${yearText}</option>`;
+               yearSelect.innerHTML = `<option value="" disabled selected>Year</option>`;
                for (let i = today.getFullYear(); i >= 1920; i--) {
                    const option = new Option(i, i);
                    if (i === cutoffYear) {
@@ -321,8 +340,9 @@
                const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
                monthSelect.innerHTML = `<option value="" disabled>${monthText}</option>`;
                for (let i = 0; i < 12; i++) {
+                   const displayMonthNames = monthNames[currentLang];
                    const monthStr = (i + 1).toString().padStart(2, '0');
-                   const optionText = `${monthStr}-${monthNames.en[i]}`;
+                   const optionText = `${monthStr}-${displayMonthNames[i]}`;
                    const option = new Option(optionText, i);
                    if (i === cutoffMonth) {
                        option.selected = true;
@@ -342,7 +362,11 @@
                
                const daysInMonth = new Date(year, month + 1, 0).getDate();
                for (let i = 1; i <= daysInMonth; i++) {
-                   daySelect.add(new Option(i, i));
+                   const option = new Option(i, i);
+                   if (year === cutoffYear && month === cutoffMonth && i === cutoffDay) {
+                      option.selected = true;
+                   }
+                   daySelect.add(option);
                }
            }
            
