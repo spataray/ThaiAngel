@@ -79,8 +79,11 @@
            color: #6c757d;
        }
        .verbiage-container {
-           font-size: 1rem;
+           font-size: 1.25rem; /* New default size */
            transition: font-size 0.3s;
+       }
+       .verbiage-container.normal {
+           font-size: 1rem;
        }
        .verbiage-container.large {
            font-size: 1.25rem;
@@ -165,7 +168,7 @@
 <div class="font-switcher">
 <select id="font-size-select" aria-label="Select font size">
 <option value="normal">Normal</option>
-<option value="large">Large</option>
+<option value="large" selected>Large</option>
 <option value="extra-large">Extra Large</option>
 </select>
 </div>
@@ -174,7 +177,7 @@
 <span class="en">Age Verifier</span>
 <span class="th">เครื่องมือตรวจสอบอายุ</span>
 </h1>
-<div class="verbiage-container" id="verbiage-container">
+<div class="verbiage-container large" id="verbiage-container">
 <p class="photo-confirm-text">
 <span class="en">Confirm picture matches the customer.</span>
 <span class="th">ยืนยันรูปภาพตรงกับลูกค้า</span>
@@ -216,8 +219,8 @@
            const daySelect = document.getElementById('day-select');
            const resultDiv = document.getElementById('result');
 
-           // Current time is Monday, August 4, 2025 at 10:45:00 PM HST.
-           const today = new Date('2025-08-04T10:45:00');
+           // Use the actual current date
+           const today = new Date();
            const cutoffYear = today.getFullYear() - 21;
            const cutoffMonth = today.getMonth();
            const cutoffDay = today.getDate();
@@ -266,7 +269,7 @@
                    yearSelect.add(option);
                }
                
-               // Populate months and days defaulting to cutoffMonth
+               // Populate months and days
                populateMonths();
                populateDays();
                
@@ -288,8 +291,8 @@
                // Enable/disable day dropdown based on month selection
                daySelect.disabled = isNaN(month);
 
-               // If year is not selected, reset UI
-               if (isNaN(year) || isNaN(month) || isNaN(day)) {
+               // If any field is not selected, reset UI
+               if (isNaN(year) || isNaN(month)) {
                    setNeutral();
                    return;
                }
@@ -319,6 +322,10 @@
                
                // If year and month are the cutoff, check day
                if (year === cutoffYear && month === cutoffMonth) {
+                   if (isNaN(day)) {
+                       setNeutral();
+                       return;
+                   }
                    if (day > cutoffDay) {
                        setDenied();
                    } else {
