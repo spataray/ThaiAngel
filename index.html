@@ -237,12 +237,102 @@
 
            // --- CUSTOM RESPONSES ---
            const deniedResponses = {
-                '0': "Ah! Sorry, come back on your 21st birthday!",
-                '1': "Just one day to go! We'll see you tomorrow.",
-                '2': "So close! Only 2 days left.",
-                '3': "Almost there! Come back in 3 days.",
-                '7': "Just a week away! The countdown is on.",
-                '30': "Less than a month to go! We're waiting for you.",
+                '0': [
+                   "Ah! Sorry, come back on your 21st birthday!",
+                   "Today's the day! But not for you... yet. Come back later!",
+                   "So close! You've got to wait until your birthday.",
+                   "Nearly there! It's your day, but you'll have to wait a little longer.",
+                   "The universe says wait. Your 21st birthday is the magic word!",
+                   "It's a big day! But the clock hasn't struck midnight yet. See you soon!",
+                   "Just a few hours left. Come back when you're officially 21.",
+                   "The day is yours, but the drinks aren't. Happy (early) birthday!",
+                   "Today's your day to celebrate, just not with us. Not yet!",
+                   "We're on standby for your 21st birthday. Come back when you're ready!"
+                ],
+                '1': [
+                   "Just one day to go! We'll see you tomorrow.",
+                   "Tomorrow's the big day! We're saving a spot for you.",
+                   "So close! Only 24 hours left.",
+                   "The final countdown is on. See you tomorrow!",
+                   "Almost there! Just one more sleep.",
+                   "You've waited this long, what's one more day? See you soon!",
+                   "Tomorrow, the wait is over. But today, it is not.",
+                   "One more sunrise until freedom. We'll be here waiting!",
+                   "The day before the day. See you tomorrow for the real celebration.",
+                   "Just a little longer! One more day and you're good to go."
+                ],
+                '2': [
+                   "So close! Only 2 days left.",
+                   "The day after tomorrow is your new best friend. See you then!",
+                   "Almost there! Just 48 hours to go.",
+                   "Counting down the last two days. It's almost time!",
+                   "Hold on a little longer. Just 2 days to go!",
+                   "The wait is nearly over. Come back in 2 days!",
+                   "Two more days. The excitement is building!",
+                   "You’re on the final stretch. See you in two days!",
+                   "Just a couple more days until you're officially 21.",
+                   "The big 2-1 is just two days away. Don't worry, we'll wait for you."
+                ],
+                '3': [
+                   "Almost there! Come back in 3 days.",
+                   "Good things come to those who wait. In this case, 3 days.",
+                   "Three days from now, we'll see you at the bar!",
+                   "Keep the countdown going! Just 3 days left.",
+                   "The final 72 hours. You've got this!",
+                   "We're looking forward to seeing you in 3 days.",
+                   "Three more days of patience, then it's time to celebrate!",
+                   "The light is at the end of the tunnel. Just three days away!",
+                   "You’re on the home stretch. See you in 3 days!",
+                   "Just three days away from the big 21. Don't worry, we'll be here!"
+                ],
+                '4': [
+                   "So close! Only 4 days left.",
+                   "Only 4 days until you can celebrate with us!",
+                   "The countdown is on! Just 4 days to go.",
+                   "Your 21st birthday is just around the corner. See you in 4 days!",
+                   "Patience, young grasshopper. Just 4 days to go.",
+                   "We're already planning your 21st birthday party... in 4 days.",
+                   "Four days from now, the world is your oyster. For now, it's a waiting game.",
+                   "The wait is almost over. Just 4 days to go!",
+                   "Almost a week away! The finish line is in sight.",
+                   "Just a few more days! We'll be here when you get back."
+                ],
+                '5': [
+                   "Just 5 days to go! The finish line is in sight.",
+                   "Five more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 5 days!",
+                   "Patience is a virtue, and you're almost a saint. 5 days to go!",
+                   "The countdown continues! Just 5 more days until the big 21.",
+                   "Five more days, five more sunsets, and then it's time to celebrate!",
+                   "We're keeping the bar warm for you. See you in 5 days!",
+                   "The wait is almost over. Just 5 more days!",
+                   "You're in the final stretch! Come back in 5 days.",
+                   "Just 5 days left until you're officially of legal age. We're waiting for you!"
+                ],
+                '6': [
+                   "Just 6 days to go! The wait is almost over.",
+                   "Six days. Almost a week! You can do it.",
+                   "The final week has begun. See you in 6 days!",
+                   "Six more days and you're good to go. We're counting with you!",
+                   "You've waited 20 years, 364 days. What's 6 more? See you soon!",
+                   "Patience is a virtue, and you're about to be rewarded. See you in 6 days!",
+                   "The clock is ticking down. Just 6 more days!",
+                   "The wait is almost over. You're in the final week!",
+                   "Almost a week away! The countdown is getting real.",
+                   "Six more sunrises until your 21st birthday. We'll be here for you!"
+                ],
+                '7': [
+                   "Just a week away! The countdown is on.",
+                   "One more week to go! We're saving a spot for you.",
+                   "Seven days and the wait is over. We're looking forward to seeing you!",
+                   "The final week is here. Don't worry, we're counting with you!",
+                   "Just 7 days left until you can celebrate with us.",
+                   "One week from today, you're good to go!",
+                   "You're in the home stretch. One more week and you're there!",
+                   "The final seven days. It's time to get excited!",
+                   "Patience, young grasshopper. Just 7 days to go!",
+                   "You've waited this long, what's one more week? See you soon!"
+                ],
                 'default': "Sorry, you are not yet 21. See you when you're of legal age!"
            };
 
@@ -377,11 +467,9 @@
            
            function setDenied(daysLeft) {
                resultDiv.className = 'result-display denied';
-               if (deniedResponses[daysLeft]) {
-                   resultDiv.textContent = deniedResponses[daysLeft];
-               } else {
-                   resultDiv.textContent = deniedResponses['default'];
-               }
+               const responseList = deniedResponses[daysLeft] || [deniedResponses['default']];
+               const randomResponse = responseList[Math.floor(Math.random() * responseList.length)];
+               resultDiv.textContent = randomResponse;
            }
            
            function setNeutral() {
