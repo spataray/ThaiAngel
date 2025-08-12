@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T.A. Station Age Verifier / T.A. Station เครื่องมือตรวจสอบอายุ</title>
+<title>Age Verifier / เครื่องมือตรวจสอบอายุ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -79,7 +79,7 @@
            color: #6c757d;
        }
        .verbiage-container {
-           font-size: 1.25rem; /* New default size */
+           font-size: 1.25rem;
            transition: font-size 0.3s;
        }
        .verbiage-container.normal {
@@ -141,6 +141,10 @@
            background-color: var(--neutral-color);
            transition: background-color 0.4s ease, transform 0.2s ease;
            transform: scale(1);
+           height: 2.2rem;
+           display: flex;
+           justify-content: center;
+           align-items: center;
        }
        .approved {
            background-color: var(--approved-color);
@@ -174,8 +178,8 @@
 </div>
 </div>
 <h1>
-<span class="en">T.A. Station Age Verifier</span>
-<span class="th">T.A. Station เครื่องมือตรวจสอบอายุ</span>
+<span class="en">Age Verifier</span>
+<span class="th">เครื่องมือตรวจสอบอายุ</span>
 </h1>
 <div class="verbiage-container large" id="verbiage-container">
 <p class="photo-confirm-text">
@@ -219,7 +223,6 @@
            const daySelect = document.getElementById('day-select');
            const resultDiv = document.getElementById('result');
 
-           // Use the actual current date
            const today = new Date();
            const cutoffYear = today.getFullYear() - 21;
            const cutoffMonth = today.getMonth();
@@ -230,6 +233,25 @@
                th: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
            };
            let currentLang = 'en';
+
+           // --- CUSTOM RESPONSES ---
+           const deniedResponses = {
+                'today': "Ah! Sorry, come back on your 21st birthday!",
+                '1': "Just one day to go! We'll see you tomorrow.",
+                '2': "So close! Only 2 days left.",
+                '3': "Almost there! Come back in 3 days.",
+                '7': "Just a week away! The countdown is on.",
+                '30': "Less than a month to go! We're waiting for you.",
+                'default': "Sorry, you are not yet 21. See you when you're of legal age!"
+           };
+
+           const approvedResponses = [
+               "Enjoy your night! 🎉",
+               "Welcome, it's a pleasure to serve you!",
+               "Cheers! You're good to go.",
+               "All clear! Come on in.",
+               "Perfect. We've been expecting you."
+           ];
            
            // --- LANGUAGE SWITCHER ---
            enBtn.addEventListener('click', () => setLanguage('en'));
@@ -250,7 +272,6 @@
            
            // --- INITIALIZATION ---
            function initialSetup() {
-               // Set the legal date verbiage
                const cutoffDateFormatted = new Date(cutoffYear, cutoffMonth, cutoffDay).toLocaleDateString('en-US', {
                    year: 'numeric', month: 'long', day: 'numeric'
                });
@@ -259,7 +280,6 @@
                    <span class="th">สามารถดื่มได้หากเกิดในหรือก่อนวันที่ <br/><strong>${cutoffDateFormatted}</strong></span>
                `;
                
-               // Populate year dropdown defaulting to cutoffYear
                yearSelect.innerHTML = `<option value="" disabled selected>Year</option>`;
                for (let i = today.getFullYear(); i >= 1920; i--) {
                    const option = new Option(i, i);
@@ -269,11 +289,9 @@
                    yearSelect.add(option);
                }
                
-               // Populate months and days
                populateMonths();
                populateDays();
                
-               // Initial state check
                handleDateChange();
            }
            
@@ -288,51 +306,52 @@
                const month = parseInt(monthSelect.value);
                const day = parseInt(daySelect.value);
                
-               // Enable/disable day dropdown based on month selection
                daySelect.disabled = isNaN(month);
 
-               // If any field is not selected, reset UI
                if (isNaN(year) || isNaN(month)) {
                    setNeutral();
                    return;
                }
 
-               // Instant feedback based on year selection
                if (year > cutoffYear) {
-                   setDenied();
+                   setDenied(null);
                    return;
                }
                
                if (year < cutoffYear) {
-                   setApproved();
+                   setApproved(null);
                    return;
                }
                
-               // If year is the cutoff year, check month
                if (year === cutoffYear) {
                    if (month > cutoffMonth) {
-                       setDenied();
+                       setDenied(null);
                        return;
                    }
                    if (month < cutoffMonth) {
-                       setApproved();
+                       setApproved(null);
                        return;
                    }
                }
                
-               // If year and month are the cutoff, check day
                if (year === cutoffYear && month === cutoffMonth) {
                    if (isNaN(day)) {
                        setNeutral();
                        return;
                    }
                    if (day > cutoffDay) {
-                       setDenied();
+                       const birthDate = new Date(year, month, day);
+                       const diffTime = birthDate.getTime() - today.getTime();
+                       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                       setDenied(diffDays);
                    } else {
-                       setApproved();
+                       const birthDate = new Date(year, month, day);
+                       const isBirthday = (birthDate.getMonth() === today.getMonth() && birthDate.getDate() === today.getDate() && birthDate.getFullYear() === today.getFullYear() - 21);
+                       setApproved(isBirthday ? 'birthday' : null);
                    }
                    return;
                }
+               setNeutral();
            }
            
            // --- HELPER & UI FUNCTIONS ---
@@ -366,14 +385,25 @@
                }
            }
            
-           function setApproved() {
+           function setApproved(type) {
                resultDiv.className = 'result-display approved';
-               resultDiv.textContent = 'APPROVED';
+               if (type === 'birthday') {
+                   resultDiv.textContent = '🥳 HAPPY BIRTHDAY! 🎉';
+               } else {
+                   const randomResponse = approvedResponses[Math.floor(Math.random() * approvedResponses.length)];
+                   resultDiv.textContent = randomResponse;
+               }
            }
            
-           function setDenied() {
+           function setDenied(daysLeft) {
                resultDiv.className = 'result-display denied';
-               resultDiv.textContent = 'UNDERAGE';
+               if (daysLeft === 0) {
+                  resultDiv.textContent = deniedResponses['today'];
+               } else if (deniedResponses[daysLeft]) {
+                   resultDiv.textContent = deniedResponses[daysLeft];
+               } else {
+                   resultDiv.textContent = deniedResponses['default'];
+               }
            }
            
            function setNeutral() {
@@ -381,7 +411,6 @@
                resultDiv.textContent = '';
            }
            
-           // Initial population on page load
            initialSetup();
        });
 </script>
