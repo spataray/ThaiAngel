@@ -141,7 +141,7 @@
            background-color: var(--neutral-color);
            transition: background-color 0.4s ease, transform 0.2s ease;
            transform: scale(1);
-           min-height: 150px;
+           min-height: 120px;
            display: flex;
            justify-content: center;
            align-items: center;
@@ -237,7 +237,7 @@
 
            // --- CUSTOM RESPONSES ---
            const deniedResponses = {
-                '0': "Ah! Sorry, come back on your 21st birthday!", // Changed from 'today' to '0' for logic
+                '0': "Ah! Sorry, come back on your 21st birthday!",
                 '1': "Just one day to go! We'll see you tomorrow.",
                 '2': "So close! Only 2 days left.",
                 '3': "Almost there! Come back in 3 days.",
@@ -284,6 +284,9 @@
                yearSelect.innerHTML = `<option value="" disabled selected>Year</option>`;
                for (let i = today.getFullYear(); i >= 1920; i--) {
                    const option = new Option(i, i);
+                   if (i === cutoffYear) {
+                       option.selected = true;
+                   }
                    yearSelect.add(option);
                }
                
@@ -338,9 +341,11 @@
                monthSelect.innerHTML = `<option value="" disabled selected>${monthText}</option>`;
                for (let i = 0; i < 12; i++) {
                    const displayMonthNames = monthNames[currentLang];
-                   const monthStr = (i + 1).toString().padStart(2, '0');
                    const optionText = `${displayMonthNames[i]}`;
                    const option = new Option(optionText, i);
+                   if (i === cutoffMonth && parseInt(yearSelect.value) === cutoffYear) {
+                       option.selected = true;
+                   }
                    monthSelect.add(option);
                }
                monthSelect.disabled = false;
