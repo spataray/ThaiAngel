@@ -225,10 +225,11 @@
            const resultDiv = document.getElementById('result');
 
            const today = new Date();
-           const cutoffYear = today.getFullYear() - 21;
-           const cutoffMonth = today.getMonth();
-           const cutoffDay = today.getDate();
-           
+           const cutoffDate = new Date(today.getFullYear() - 21, today.getMonth(), today.getDate());
+           const cutoffYear = cutoffDate.getFullYear();
+           const cutoffMonth = cutoffDate.getMonth();
+           const cutoffDay = cutoffDate.getDate();
+
            const monthNames = {
                en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                th: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
@@ -333,6 +334,282 @@
                    "Patience, young grasshopper. Just 7 days to go!",
                    "You've waited this long, what's one more week? See you soon!"
                 ],
+                '8': [
+                   "Just 8 days to go! The wait is almost over.",
+                   "Eight more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 8 days!",
+                   "The countdown continues! Just 8 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 8 days!",
+                   "The wait is almost over. Just 8 more days!",
+                   "You're in the final stretch! Come back in 8 days.",
+                   "Just 8 days left until you're officially of legal age. We're waiting for you!",
+                   "Eight more days. The excitement is building!",
+                   "Hold on a little longer. Just 8 days to go!"
+                ],
+                '9': [
+                   "Just 9 days to go! The wait is almost over.",
+                   "Nine more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 9 days!",
+                   "The countdown continues! Just 9 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 9 days!",
+                   "The wait is almost over. Just 9 more days!",
+                   "You're in the final stretch! Come back in 9 days.",
+                   "Just 9 days left until you're officially of legal age. We're waiting for you!",
+                   "Nine more days. The excitement is building!",
+                   "Hold on a little longer. Just 9 days to go!"
+                ],
+                '10': [
+                   "Just 10 days to go! The wait is almost over.",
+                   "Ten more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 10 days!",
+                   "The countdown continues! Just 10 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 10 days!",
+                   "The wait is almost over. Just 10 more days!",
+                   "You're in the final stretch! Come back in 10 days.",
+                   "Just 10 days left until you're officially of legal age. We're waiting for you!",
+                   "Ten more days. The excitement is building!",
+                   "Hold on a little longer. Just 10 days to go!"
+                ],
+                '11': [
+                   "Just 11 days to go! The wait is almost over.",
+                   "Eleven more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 11 days!",
+                   "The countdown continues! Just 11 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 11 days!",
+                   "The wait is almost over. Just 11 more days!",
+                   "You're in the final stretch! Come back in 11 days.",
+                   "Just 11 days left until you're officially of legal age. We're waiting for you!",
+                   "Eleven more days. The excitement is building!",
+                   "Hold on a little longer. Just 11 days to go!"
+                ],
+                '12': [
+                   "Just 12 days to go! The wait is almost over.",
+                   "Twelve more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 12 days!",
+                   "The countdown continues! Just 12 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 12 days!",
+                   "The wait is almost over. Just 12 more days!",
+                   "You're in the final stretch! Come back in 12 days.",
+                   "Just 12 days left until you're officially of legal age. We're waiting for you!",
+                   "Twelve more days. The excitement is building!",
+                   "Hold on a little longer. Just 12 days to go!"
+                ],
+                '13': [
+                   "Just 13 days to go! The wait is almost over.",
+                   "Thirteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 13 days!",
+                   "The countdown continues! Just 13 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 13 days!",
+                   "The wait is almost over. Just 13 more days!",
+                   "You're in the final stretch! Come back in 13 days.",
+                   "Just 13 days left until you're officially of legal age. We're waiting for you!",
+                   "Thirteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 13 days to go!"
+                ],
+                '14': [
+                   "Just 14 days to go! The wait is almost over.",
+                   "Fourteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 14 days!",
+                   "The countdown continues! Just 14 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 14 days!",
+                   "The wait is almost over. Just 14 more days!",
+                   "You're in the final stretch! Come back in 14 days.",
+                   "Just 14 days left until you're officially of legal age. We're waiting for you!",
+                   "Fourteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 14 days to go!"
+                ],
+                '15': [
+                   "Just 15 days to go! The wait is almost over.",
+                   "Fifteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 15 days!",
+                   "The countdown continues! Just 15 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 15 days!",
+                   "The wait is almost over. Just 15 more days!",
+                   "You're in the final stretch! Come back in 15 days.",
+                   "Just 15 days left until you're officially of legal age. We're waiting for you!",
+                   "Fifteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 15 days to go!"
+                ],
+                '16': [
+                   "Just 16 days to go! The wait is almost over.",
+                   "Sixteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 16 days!",
+                   "The countdown continues! Just 16 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 16 days!",
+                   "The wait is almost over. Just 16 more days!",
+                   "You're in the final stretch! Come back in 16 days.",
+                   "Just 16 days left until you're officially of legal age. We're waiting for you!",
+                   "Sixteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 16 days to go!"
+                ],
+                '17': [
+                   "Just 17 days to go! The wait is almost over.",
+                   "Seventeen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 17 days!",
+                   "The countdown continues! Just 17 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 17 days!",
+                   "The wait is almost over. Just 17 more days!",
+                   "You're in the final stretch! Come back in 17 days.",
+                   "Just 17 days left until you're officially of legal age. We're waiting for you!",
+                   "Seventeen more days. The excitement is building!",
+                   "Hold on a little longer. Just 17 days to go!"
+                ],
+                '18': [
+                   "Just 18 days to go! The wait is almost over.",
+                   "Eighteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 18 days!",
+                   "The countdown continues! Just 18 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 18 days!",
+                   "The wait is almost over. Just 18 more days!",
+                   "You're in the final stretch! Come back in 18 days.",
+                   "Just 18 days left until you're officially of legal age. We're waiting for you!",
+                   "Eighteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 18 days to go!"
+                ],
+                '19': [
+                   "Just 19 days to go! The wait is almost over.",
+                   "Nineteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 19 days!",
+                   "The countdown continues! Just 19 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 19 days!",
+                   "The wait is almost over. Just 19 more days!",
+                   "You're in the final stretch! Come back in 19 days.",
+                   "Just 19 days left until you're officially of legal age. We're waiting for you!",
+                   "Nineteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 19 days to go!"
+                ],
+                '20': [
+                   "Just 20 days to go! The wait is almost over.",
+                   "Twenty more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 20 days!",
+                   "The countdown continues! Just 20 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 20 days!",
+                   "The wait is almost over. Just 20 more days!",
+                   "You're in the final stretch! Come back in 20 days.",
+                   "Just 20 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty more days. The excitement is building!",
+                   "Hold on a little longer. Just 20 days to go!"
+                ],
+                '21': [
+                   "Just 21 days to go! The wait is almost over.",
+                   "Twenty-one more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 21 days!",
+                   "The countdown continues! Just 21 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 21 days!",
+                   "The wait is almost over. Just 21 more days!",
+                   "You're in the final stretch! Come back in 21 days.",
+                   "Just 21 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-one more days. The excitement is building!",
+                   "Hold on a little longer. Just 21 days to go!"
+                ],
+                '22': [
+                   "Just 22 days to go! The wait is almost over.",
+                   "Twenty-two more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 22 days!",
+                   "The countdown continues! Just 22 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 22 days!",
+                   "The wait is almost over. Just 22 more days!",
+                   "You're in the final stretch! Come back in 22 days.",
+                   "Just 22 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-two more days. The excitement is building!",
+                   "Hold on a little longer. Just 22 days to go!"
+                ],
+                '23': [
+                   "Just 23 days to go! The wait is almost over.",
+                   "Twenty-three more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 23 days!",
+                   "The countdown continues! Just 23 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 23 days!",
+                   "The wait is almost over. Just 23 more days!",
+                   "You're in the final stretch! Come back in 23 days.",
+                   "Just 23 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-three more days. The excitement is building!",
+                   "Hold on a little longer. Just 23 days to go!"
+                ],
+                '24': [
+                   "Just 24 days to go! The wait is almost over.",
+                   "Twenty-four more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 24 days!",
+                   "The countdown continues! Just 24 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 24 days!",
+                   "The wait is almost over. Just 24 more days!",
+                   "You're in the final stretch! Come back in 24 days.",
+                   "Just 24 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-four more days. The excitement is building!",
+                   "Hold on a little longer. Just 24 days to go!"
+                ],
+                '25': [
+                   "Just 25 days to go! The wait is almost over.",
+                   "Twenty-five more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 25 days!",
+                   "The countdown continues! Just 25 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 25 days!",
+                   "The wait is almost over. Just 25 more days!",
+                   "You're in the final stretch! Come back in 25 days.",
+                   "Just 25 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-five more days. The excitement is building!",
+                   "Hold on a little longer. Just 25 days to go!"
+                ],
+                '26': [
+                   "Just 26 days to go! The wait is almost over.",
+                   "Twenty-six more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 26 days!",
+                   "The countdown continues! Just 26 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 26 days!",
+                   "The wait is almost over. Just 26 more days!",
+                   "You're in the final stretch! Come back in 26 days.",
+                   "Just 26 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-six more days. The excitement is building!",
+                   "Hold on a little longer. Just 26 days to go!"
+                ],
+                '27': [
+                   "Just 27 days to go! The wait is almost over.",
+                   "Twenty-seven more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 27 days!",
+                   "The countdown continues! Just 27 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 27 days!",
+                   "The wait is almost over. Just 27 more days!",
+                   "You're in the final stretch! Come back in 27 days.",
+                   "Just 27 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-seven more days. The excitement is building!",
+                   "Hold on a little longer. Just 27 days to go!"
+                ],
+                '28': [
+                   "Just 28 days to go! The wait is almost over.",
+                   "Twenty-eight more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 28 days!",
+                   "The countdown continues! Just 28 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 28 days!",
+                   "The wait is almost over. Just 28 more days!",
+                   "You're in the final stretch! Come back in 28 days.",
+                   "Just 28 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-eight more days. The excitement is building!",
+                   "Hold on a little longer. Just 28 days to go!"
+                ],
+                '29': [
+                   "Just 29 days to go! The wait is almost over.",
+                   "Twenty-nine more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 29 days!",
+                   "The countdown continues! Just 29 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 29 days!",
+                   "The wait is almost over. Just 29 more days!",
+                   "You're in the final stretch! Come back in 29 days.",
+                   "Just 29 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-nine more days. The excitement is building!",
+                   "Hold on a little longer. Just 29 days to go!"
+                ],
+                '30': [
+                   "Less than a month to go! We're waiting for you.",
+                   "Just 30 days left until you're officially of legal age!",
+                   "The countdown continues! Just 30 more days until the big 21.",
+                   "Thirty more days. The excitement is building!",
+                   "Hold on a little longer. Just 30 days to go!",
+                   "Just a few more weeks, and the wait is over. See you in 30 days!",
+                   "You're in the final stretch! Come back in 30 days.",
+                   "We're keeping the bar warm for you. See you in 30 days!",
+                   "Patience is a virtue, and you're about to be rewarded. See you in 30 days!",
+                   "Thirty more days of counting. You can do it!"
+                ],
                 'default': "Sorry, you are not yet 21. See you when you're of legal age!"
            };
 
@@ -363,7 +640,7 @@
            
            // --- INITIALIZATION ---
            function initialSetup() {
-               const cutoffDateFormatted = new Date(cutoffYear, cutoffMonth, cutoffDay).toLocaleDateString('en-US', {
+               const cutoffDateFormatted = cutoffDate.toLocaleDateString('en-US', {
                    year: 'numeric', month: 'long', day: 'numeric'
                });
                legalDateText.innerHTML = `
@@ -435,7 +712,6 @@
                        return;
                    }
                    const selectedDate = new Date(year, month, day);
-                   const cutoffDate = new Date(cutoffYear, cutoffMonth, cutoffDay);
 
                    if (selectedDate > cutoffDate) {
                        const diffTime = selectedDate.getTime() - cutoffDate.getTime();
