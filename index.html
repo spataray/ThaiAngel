@@ -141,10 +141,11 @@
            background-color: var(--neutral-color);
            transition: background-color 0.4s ease, transform 0.2s ease;
            transform: scale(1);
-           height: 2.2rem;
+           min-height: 120px; /* Adjust this value for more rows */
            display: flex;
            justify-content: center;
            align-items: center;
+           text-align: center;
        }
        .approved {
            background-color: var(--approved-color);
@@ -351,7 +352,6 @@
                    }
                    return;
                }
-               setNeutral();
            }
            
            // --- HELPER & UI FUNCTIONS ---
