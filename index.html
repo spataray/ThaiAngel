@@ -406,23 +406,50 @@
                
                daySelect.disabled = isNaN(month);
 
-               if (isNaN(year) || isNaN(month) || isNaN(day)) {
-                   setNeutral();
+               // Handle Year selection first
+               if (!isNaN(year) && year < cutoffYear) {
+                   setApproved(null);
+                   return;
+               }
+               if (!isNaN(year) && year > cutoffYear) {
+                   setDenied(null);
                    return;
                }
 
-               const selectedDate = new Date(year, month, day);
-               const cutoffDate = new Date(cutoffYear, cutoffMonth, cutoffDay);
-
-               if (selectedDate > cutoffDate) {
-                   const diffTime = selectedDate.getTime() - cutoffDate.getTime();
-                   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                   setDenied(diffDays);
-               } else if (selectedDate.getTime() === cutoffDate.getTime()) {
-                   setApproved('birthday');
-               } else {
-                   setApproved(null);
+               // Handle Month selection for cutoff year
+               if (!isNaN(year) && year === cutoffYear) {
+                   if (!isNaN(month) && month < cutoffMonth) {
+                       setApproved(null);
+                       return;
+                   }
+                   if (!isNaN(month) && month > cutoffMonth) {
+                       setDenied(null);
+                       return;
+                   }
                }
+               
+               // Handle Day selection for cutoff date
+               if (!isNaN(year) && year === cutoffYear && !isNaN(month) && month === cutoffMonth) {
+                   if (isNaN(day)) {
+                       setNeutral();
+                       return;
+                   }
+                   const selectedDate = new Date(year, month, day);
+                   const cutoffDate = new Date(cutoffYear, cutoffMonth, cutoffDay);
+
+                   if (selectedDate > cutoffDate) {
+                       const diffTime = selectedDate.getTime() - cutoffDate.getTime();
+                       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                       setDenied(diffDays);
+                   } else if (selectedDate.getTime() === cutoffDate.getTime()) {
+                       setApproved('birthday');
+                   } else {
+                       setApproved(null);
+                   }
+                   return;
+               }
+
+               setNeutral();
            }
            
            // --- HELPER & UI FUNCTIONS ---
