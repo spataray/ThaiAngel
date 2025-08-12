@@ -141,7 +141,7 @@
            background-color: var(--neutral-color);
            transition: background-color 0.4s ease, transform 0.2s ease;
            transform: scale(1);
-           min-height: 150px; /* Adjust this value for more rows */
+           min-height: 150px;
            display: flex;
            justify-content: center;
            align-items: center;
@@ -237,7 +237,7 @@
 
            // --- CUSTOM RESPONSES ---
            const deniedResponses = {
-                'today': "Ah! Sorry, come back on your 21st birthday!",
+                '0': "Ah! Sorry, come back on your 21st birthday!", // Changed from 'today' to '0' for logic
                 '1': "Just one day to go! We'll see you tomorrow.",
                 '2': "So close! Only 2 days left.",
                 '3': "Almost there! Come back in 3 days.",
@@ -284,9 +284,6 @@
                yearSelect.innerHTML = `<option value="" disabled selected>Year</option>`;
                for (let i = today.getFullYear(); i >= 1920; i--) {
                    const option = new Option(i, i);
-                   if (i === cutoffYear) {
-                       option.selected = true;
-                   }
                    yearSelect.add(option);
                }
                
@@ -297,8 +294,15 @@
            }
            
            // --- EVENT LISTENERS ---
-           yearSelect.addEventListener('change', handleDateChange);
-           monthSelect.addEventListener('change', handleDateChange);
+           yearSelect.addEventListener('change', () => {
+               populateMonths();
+               populateDays();
+               handleDateChange();
+           });
+           monthSelect.addEventListener('change', () => {
+               populateDays();
+               handleDateChange();
+           });
            daySelect.addEventListener('change', handleDateChange);
            
            // --- HANDLER FUNCTION ---
@@ -309,63 +313,34 @@
                
                daySelect.disabled = isNaN(month);
 
-               if (isNaN(year) || isNaN(month)) {
+               if (isNaN(year) || isNaN(month) || isNaN(day)) {
                    setNeutral();
                    return;
                }
 
-               if (year > cutoffYear) {
-                   setDenied(null);
-                   return;
-               }
-               
-               if (year < cutoffYear) {
+               const selectedDate = new Date(year, month, day);
+               const cutoffDate = new Date(cutoffYear, cutoffMonth, cutoffDay);
+
+               if (selectedDate > cutoffDate) {
+                   const diffTime = selectedDate.getTime() - cutoffDate.getTime();
+                   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                   setDenied(diffDays);
+               } else if (selectedDate.getTime() === cutoffDate.getTime()) {
+                   setApproved('birthday');
+               } else {
                    setApproved(null);
-                   return;
-               }
-               
-               if (year === cutoffYear) {
-                   if (month > cutoffMonth) {
-                       setDenied(null);
-                       return;
-                   }
-                   if (month < cutoffMonth) {
-                       setApproved(null);
-                       return;
-                   }
-               }
-               
-               if (year === cutoffYear && month === cutoffMonth) {
-                   if (isNaN(day)) {
-                       setNeutral();
-                       return;
-                   }
-                   if (day > cutoffDay) {
-                       const birthDate = new Date(year, month, day);
-                       const diffTime = birthDate.getTime() - today.getTime();
-                       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                       setDenied(diffDays);
-                   } else {
-                       const birthDate = new Date(year, month, day);
-                       const isBirthday = (birthDate.getMonth() === today.getMonth() && birthDate.getDate() === today.getDate() && birthDate.getFullYear() === today.getFullYear() - 21);
-                       setApproved(isBirthday ? 'birthday' : null);
-                   }
-                   return;
                }
            }
            
            // --- HELPER & UI FUNCTIONS ---
            function populateMonths() {
                const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
-               monthSelect.innerHTML = `<option value="" disabled>${monthText}</option>`;
+               monthSelect.innerHTML = `<option value="" disabled selected>${monthText}</option>`;
                for (let i = 0; i < 12; i++) {
                    const displayMonthNames = monthNames[currentLang];
                    const monthStr = (i + 1).toString().padStart(2, '0');
-                   const optionText = `${monthStr}-${displayMonthNames[i]}`;
+                   const optionText = `${displayMonthNames[i]}`;
                    const option = new Option(optionText, i);
-                   if (i === cutoffMonth) {
-                       option.selected = true;
-                   }
                    monthSelect.add(option);
                }
                monthSelect.disabled = false;
@@ -397,9 +372,7 @@
            
            function setDenied(daysLeft) {
                resultDiv.className = 'result-display denied';
-               if (daysLeft === 0) {
-                  resultDiv.textContent = deniedResponses['today'];
-               } else if (deniedResponses[daysLeft]) {
+               if (deniedResponses[daysLeft]) {
                    resultDiv.textContent = deniedResponses[daysLeft];
                } else {
                    resultDiv.textContent = deniedResponses['default'];
