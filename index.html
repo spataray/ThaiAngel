@@ -180,7 +180,7 @@
 </div>
 <h1>
 <span class="en">T.A. Station Age Verifier</span>
-<span class="th">T.A. Station มือตรวจสอบอายุ</span>
+<span class="th">T.A. Station เครื่องมือตรวจสอบอายุ</span>
 </h1>
 <div class="verbiage-container large" id="verbiage-container">
 <p class="photo-confirm-text">
@@ -458,7 +458,7 @@
                monthSelect.innerHTML = `<option value="" disabled selected>${monthText}</option>`;
                for (let i = 0; i < 12; i++) {
                    const displayMonthNames = monthNames[currentLang];
-                   const optionText = `${displayMonthNames[i]}`;
+                   const optionText = `${i + 1}-${displayMonthNames[i]}`;
                    const option = new Option(optionText, i);
                    if (i === cutoffMonth && parseInt(yearSelect.value) === cutoffYear) {
                        option.selected = true;
