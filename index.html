@@ -10,13 +10,13 @@
 <style>
        :root {
            --background-color: rgba(22, 17, 39, 0.75); /* Dark semi-transparent overlay */
-           --container-color: #fffaf0; /* Creamy off-white */
-           --text-color: #333;
+           --container-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+           --text-color: #f0f0f0; /* Light gray text for readability */
            --primary-color: #e74c3c; /* Neon red from sign */
            --approved-color: #28a745; /* A vibrant green for approval */
            --denied-color: #e74c3c; /* Neon red for denial */
-           --neutral-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-           --border-color: #ced4da;
+           --neutral-color: rgba(255, 255, 255, 0.1); /* Very subtle transparent white */
+           --border-color: #f1c40f; /* Golden yellow border color */
            --shadow-color: rgba(0, 0, 0, 0.2);
        }
        body {
@@ -28,7 +28,7 @@
            margin: 0;
            background-color: var(--background-color);
            color: var(--text-color);
-           background-image: url("IMG_8881.jpeg");
+           background-image: url("http://googleusercontent.com/generated_image_content/0");
            background-size: cover;
            background-position: center;
            background-attachment: fixed;
@@ -49,6 +49,7 @@
            background-color: var(--container-color);
            border-radius: 20px;
            box-shadow: 0 10px 25px var(--shadow-color);
+           border: 2px solid var(--border-color); /* Golden border */
            width: 90%;
            max-width: 450px;
            text-align: center;
@@ -65,14 +66,15 @@
            gap: 0.5rem;
        }
        .lang-btn {
-           background-color: #e9ecef;
-           border: 1px solid #ced4da;
+           background-color: var(--neutral-color); /* Updated button color */
+           border: 1px solid var(--border-color);
            border-radius: 8px;
            padding: 0.25rem 0.5rem;
            cursor: pointer;
            font-size: 0.8rem;
-           opacity: 0.6;
+           opacity: 0.8;
            transition: opacity 0.3s;
+           color: var(--text-color);
        }
        .lang-btn.active {
            background-color: var(--primary-color);
@@ -84,15 +86,17 @@
            padding: 0.25rem 0.5rem;
            border-radius: 8px;
            border: 1px solid var(--border-color);
+           background-color: var(--neutral-color);
+           color: var(--text-color);
        }
        h1 {
            margin-top: 2rem;
            font-weight: 700;
-           color: #333; /* Ensure heading is readable */
+           color: #f0f0f0; /* Updated heading color */
        }
        p {
            margin-bottom: 2rem;
-           color: #6c757d;
+           color: #ccc; /* Lighter text for contrast */
        }
        .verbiage-container {
            font-size: 1.25rem;
@@ -133,7 +137,7 @@
            font-weight: 600;
            margin-bottom: 0.25rem;
            text-transform: uppercase;
-           color: #6c757d;
+           color: #ccc; /* Lighter label text */
        }
        .date-wheel {
            font-size: 1.1rem;
@@ -143,10 +147,11 @@
            border-radius: 12px;
            width: 100%;
            box-sizing: border-box;
-           background-color: #fff;
+           background-color: rgba(255, 255, 255, 0.1); /* Subtle transparent background for dropdowns */
+           color: var(--text-color);
        }
        .date-wheel:disabled {
-           background-color: #f8f9fa;
+           background-color: rgba(255, 255, 255, 0.05);
        }
        .result-display {
            padding: 2rem;
@@ -195,8 +200,8 @@
 </div>
 </div>
 <h1>
-<span class="en">T.A. Station Age Verifier</span>
-<span class="th">T.A. Station เครื่องมือตรวจสอบอายุ</span>
+<span class="en">Age Verifier</span>
+<span class="th">เครื่องมือตรวจสอบอายุ</span>
 </h1>
 <div class="verbiage-container large" id="verbiage-container">
 <p class="photo-confirm-text">
