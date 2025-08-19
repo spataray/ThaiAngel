@@ -9,15 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
 <style>
        :root {
-           --background-color: #f4f7f9;
-           --container-color: #ffffff;
-           --text-color: #333;
-           --primary-color: #007bff;
-           --approved-color: #28a745;
-           --denied-color: #dc3545;
-           --neutral-color: #e9ecef;
-           --border-color: #ced4da;
-           --shadow-color: rgba(0, 0, 0, 0.08);
+           --background-color: rgba(22, 17, 39, 0.75); /* Dark semi-transparent overlay */
+           --container-color: rgba(0, 0, 0, 0.6); /* Semi-transparent dark background */
+           --text-color: #f0f0f0; /* Light gray text for readability */
+           --primary-color: #e74c3c; /* Neon red from sign */
+           --approved-color: #28a745; /* A vibrant green for approval */
+           --denied-color: #e74c3c; /* Neon red for denial */
+           --neutral-color: rgba(255, 255, 255, 0.1); /* Very subtle transparent white */
+           --border-color: #f1c40f; /* Golden yellow border color */
+           --shadow-color: rgba(0, 0, 0, 0.2);
        }
        body {
            font-family: 'Poppins', 'Sarabun', sans-serif;
@@ -28,33 +28,53 @@
            margin: 0;
            background-color: var(--background-color);
            color: var(--text-color);
+           background-image: url("images/ta_station_background.jpg");
+           background-size: cover;
+           background-position: center;
+           background-attachment: fixed;
+           position: relative;
+       }
+       body::before {
+           content: '';
+           position: absolute;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
+           z-index: -1;
        }
        .verifier-container {
            padding: 2rem;
            background-color: var(--container-color);
            border-radius: 20px;
            box-shadow: 0 10px 25px var(--shadow-color);
+           border: 2px solid var(--border-color); /* Golden border */
            width: 90%;
            max-width: 450px;
            text-align: center;
            position: relative;
        }
+       .controls-container {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           margin-bottom: 1rem;
+       }
        .lang-switcher {
-           position: absolute;
-           top: 1rem;
-           right: 1rem;
            display: flex;
            gap: 0.5rem;
        }
        .lang-btn {
-           background-color: #e9ecef;
-           border: 1px solid #ced4da;
+           background-color: var(--neutral-color); /* Updated button color */
+           border: 1px solid var(--border-color);
            border-radius: 8px;
            padding: 0.25rem 0.5rem;
            cursor: pointer;
            font-size: 0.8rem;
-           opacity: 0.6;
+           opacity: 0.8;
            transition: opacity 0.3s;
+           color: var(--text-color);
        }
        .lang-btn.active {
            background-color: var(--primary-color);
@@ -62,18 +82,62 @@
            border-color: var(--primary-color);
            opacity: 1;
        }
+       .font-switcher select {
+           padding: 0.25rem 0.5rem;
+           border-radius: 8px;
+           border: 1px solid var(--border-color);
+           background-color: var(--neutral-color);
+           color: var(--text-color);
+       }
        h1 {
            margin-top: 2rem;
            font-weight: 700;
+           color: #f0f0f0; /* Updated heading color */
        }
        p {
            margin-bottom: 2rem;
-           color: #6c757d;
+           color: #ccc; /* Lighter text for contrast */
+       }
+       .verbiage-container {
+           font-size: 1.25rem;
+           transition: font-size 0.3s;
+       }
+       .verbiage-container.normal {
+           font-size: 1rem;
+       }
+       .verbiage-container.large {
+           font-size: 1.25rem;
+       }
+       .verbiage-container.extra-large {
+           font-size: 1.5rem;
+       }
+       .important-text {
+           font-weight: 600;
+           color: var(--denied-color);
+           margin-bottom: 1rem;
+       }
+       .photo-confirm-text {
+           font-weight: 600;
+           color: var(--approved-color);
+           margin-bottom: 1rem;
        }
        .date-selector {
            display: flex;
            gap: 0.5rem;
            margin-bottom: 2rem;
+       }
+       .date-input-group {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           flex: 1;
+       }
+       .date-label {
+           font-size: 0.8rem;
+           font-weight: 600;
+           margin-bottom: 0.25rem;
+           text-transform: uppercase;
+           color: #ccc; /* Lighter label text */
        }
        .date-wheel {
            font-size: 1.1rem;
@@ -83,10 +147,11 @@
            border-radius: 12px;
            width: 100%;
            box-sizing: border-box;
-           background-color: #fff;
+           background-color: rgba(255, 255, 255, 0.1); /* Subtle transparent background for dropdowns */
+           color: var(--text-color);
        }
        .date-wheel:disabled {
-           background-color: #f8f9fa;
+           background-color: rgba(255, 255, 255, 0.05);
        }
        .result-display {
            padding: 2rem;
@@ -94,21 +159,14 @@
            font-size: 2.2rem;
            font-weight: 700;
            color: white;
-           position: relative;
            background-color: var(--neutral-color);
            transition: background-color 0.4s ease, transform 0.2s ease;
            transform: scale(1);
-       }
-       #underage-flag {
-           position: absolute;
-           top: 50%;
-           left: 50%;
-           transform: translate(-50%, -50%);
-           color: rgba(255, 255, 255, 0.7);
-           opacity: 0;
-           transition: opacity 0.5s;
-           font-size: 2.5rem;
-           pointer-events: none;
+           min-height: 130px;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           text-align: center;
        }
        .approved {
            background-color: var(--approved-color);
@@ -118,6 +176,7 @@
            background-color: var(--denied-color);
            transform: scale(1.03);
        }
+       /* Language Display Logic */
        .th { display: none; }
        .lang-en .en { display: inline-block; }
        .lang-en .th { display: none; }
@@ -127,28 +186,50 @@
 </head>
 <body class="lang-en">
 <div class="verifier-container">
+<div class="controls-container">
 <div class="lang-switcher">
-<button id="lang-en-btn" class="lang-btn active">EN</button>
-<button id="lang-th-btn" class="lang-btn">TH</button>
+<button id="lang-en-btn" class="lang-btn active" aria-label="Switch to English">EN</button>
+<button id="lang-th-btn" class="lang-btn" aria-label="Switch to Thai">TH</button>
+</div>
+<div class="font-switcher">
+<select id="font-size-select" aria-label="Select font size">
+<option value="normal">Normal</option>
+<option value="large" selected>Large</option>
+<option value="extra-large">Extra Large</option>
+</select>
+</div>
 </div>
 <h1>
 <span class="en">Age Verifier</span>
 <span class="th">เครื่องมือตรวจสอบอายุ</span>
 </h1>
+<div class="verbiage-container large" id="verbiage-container">
+<p class="photo-confirm-text">
+<span class="en">Confirm picture matches the customer.</span>
+<span class="th">ยืนยันรูปภาพตรงกับลูกค้า</span>
+</p>
+<p class="important-text" id="legal-date-text">
+</p>
 <p>
 <span class="en">Select the customer's date of birth.</span>
 <span class="th">กรุณาเลือกวันเกิดของลูกค้า</span>
 </p>
+</div>
 <div class="date-selector">
+<div class="date-input-group">
+<label class="date-label"><span class="en">Year</span><span class="th">ปี</span></label>
 <select id="year-select" class="date-wheel"></select>
+</div>
+<div class="date-input-group">
+<label class="date-label"><span class="en">Month</span><span class="th">เดือน</span></label>
 <select id="month-select" class="date-wheel"></select>
+</div>
+<div class="date-input-group">
+<label class="date-label"><span class="en">Day</span><span class="th">วัน</span></label>
 <select id="day-select" class="date-wheel"></select>
 </div>
+</div>
 <div id="result" class="result-display">
-<span id="underage-flag">
-<span class="en">UNDERAGE</span>
-<span class="th">อายุไม่ถึง</span>
-</span>
 </div>
 </div>
 <script>
@@ -156,137 +237,915 @@
            const body = document.body;
            const enBtn = document.getElementById('lang-en-btn');
            const thBtn = document.getElementById('lang-th-btn');
+           const fontSizeSelect = document.getElementById('font-size-select');
+           const legalDateText = document.getElementById('legal-date-text');
+           const verbiageContainer = document.getElementById('verbiage-container');
            const yearSelect = document.getElementById('year-select');
            const monthSelect = document.getElementById('month-select');
            const daySelect = document.getElementById('day-select');
            const resultDiv = document.getElementById('result');
-           let underageFlag = document.getElementById('underage-flag');
+
            const today = new Date();
-           const cutoffYear = today.getFullYear() - 21;
-           const cutoffMonth = today.getMonth();
-           const cutoffDay = today.getDate();
+           const cutoffDate = new Date(today.getFullYear() - 21, today.getMonth(), today.getDate());
+           const cutoffYear = cutoffDate.getFullYear();
+           const cutoffMonth = cutoffDate.getMonth();
+           const cutoffDay = cutoffDate.getDate();
+
            const monthNames = {
                en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                th: ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
            };
            let currentLang = 'en';
+
+           // --- CUSTOM RESPONSES ---
+           const deniedResponses = {
+                '0': [
+                   "Ah! Sorry, come back on your 21st birthday!",
+                   "Today's the day! But not for you... yet. Come back later!",
+                   "So close! You've got to wait until your birthday.",
+                   "Nearly there! It's your day, but you'll have to wait a little longer.",
+                   "The universe says wait. Your 21st birthday is the magic word!",
+                   "It's a big day! But the clock hasn't struck midnight yet. See you soon!",
+                   "Just a few hours left. Come back when you're officially 21.",
+                   "The day is yours, but the drinks aren't. Happy (early) birthday!",
+                   "Today's your day to celebrate, just not with us. Not yet!",
+                   "We're on standby for your 21st birthday. Come back when you're ready!",
+                   "The final stretch is on. We'll be celebrating with you very soon!",
+                   "You’ve waited for this moment for so long. Just a little more time!",
+                   "Almost a legend! Just a few more moments until you're 21.",
+                   "We've got your spot ready! Just waiting for your 21st birthday to arrive.",
+                   "The universe is aligned for your birthday. Just not for tonight!",
+                   "Your time will come, and it will be soon! See you later!",
+                   "Patience is a virtue, and your birthday is the reward!",
+                   "It's a countdown to your 21st birthday! We'll be here waiting.",
+                   "The big day is here! But the fun starts tomorrow. See you then!",
+                   "So close, yet so far! But not for long. See you on your birthday!",
+                ],
+                '1': [
+                   "Just one day to go! We'll see you tomorrow.",
+                   "Tomorrow's the big day! We're saving a spot for you.",
+                   "So close! Only 24 hours left.",
+                   "The final countdown is on. See you tomorrow!",
+                   "Almost there! Just one more sleep.",
+                   "You've waited this long, what's one more day? See you soon!",
+                   "Tomorrow, the wait is over. But today, it is not.",
+                   "One more sunrise until freedom. We'll be here waiting!",
+                   "The day before the day. See you tomorrow for the real celebration.",
+                   "Just a little longer! One more day and you're good to go.",
+                   "You're on the final stretch! Tomorrow is the day!",
+                   "The anticipation is building. Just one more day!",
+                   "The wait is almost over. Come back tomorrow!",
+                   "You're so close we can almost taste it. See you tomorrow!",
+                   "One more day to go! The finish line is in sight!",
+                   "The clock is ticking down. Tomorrow's your big day!",
+                   "The final stretch! Just one more day until you're officially 21.",
+                   "Just one more day of counting. You can do it!",
+                   "Tomorrow's the day! Get ready to celebrate!",
+                   "You're just one day away from a big celebration! We'll be here.",
+                ],
+                '2': [
+                   "So close! Only 2 days left.",
+                   "The day after tomorrow is your new best friend. See you then!",
+                   "Almost there! Just 48 hours to go.",
+                   "Counting down the last two days. It's almost time!",
+                   "Hold on a little longer. Just 2 days to go!",
+                   "The wait is nearly over. Come back in 2 days!",
+                   "Two more days. The excitement is building!",
+                   "You’re on the final stretch. See you in two days!",
+                   "Just a couple more days until you're officially 21.",
+                   "The big 2-1 is just two days away. Don't worry, we'll wait for you.",
+                   "You're in the final days of waiting. Two more to go!",
+                   "The countdown is getting real. See you in two days!",
+                   "Almost there! The wait is almost over. Two more days!",
+                   "The finish line is in sight. Just two more days!",
+                   "Two more days of patience, then it's time to celebrate!",
+                   "Good things come to those who wait. In this case, 2 days.",
+                   "The wait is almost over! We're saving a spot for you.",
+                   "Just a few more hours and you'll be halfway there!",
+                   "Two more sunrises until the big day. We'll be ready for you!",
+                   "The final 48 hours. The countdown is on!",
+                ],
+                '3': [
+                   "Almost there! Come back in 3 days.",
+                   "Good things come to those who wait. In this case, 3 days.",
+                   "Three days from now, we'll see you at the bar!",
+                   "Keep the countdown going! Just 3 days left.",
+                   "The final 72 hours. You've got this!",
+                   "We're looking forward to seeing you in 3 days.",
+                   "Three more days of patience, then it's time to celebrate!",
+                   "The light is at the end of the tunnel. Just three days away!",
+                   "You’re on the home stretch. See you in 3 days!",
+                   "Just three days away from the big 21. Don't worry, we'll be here!",
+                   "The wait is almost over! We'll see you in 3 days.",
+                   "Three more days and you're good to go. The countdown is on!",
+                   "You've waited this long, what's three more days?",
+                   "It's just a little bit longer. Three days to go!",
+                   "Patience is a virtue, and you're about to be rewarded. See you then!",
+                   "Three days from now, you're free to celebrate with us!",
+                   "The final 72 hours are ticking away. We'll be here for you.",
+                   "You're so close! Just three more days until the big 21.",
+                   "Three more days of counting. You can do it!",
+                   "The light at the end of the tunnel is just three days away!",
+                ],
+                '4': [
+                   "So close! Only 4 days left.",
+                   "Only 4 days until you can celebrate with us!",
+                   "The countdown is on! Just 4 days to go.",
+                   "Your 21st birthday is just around the corner. See you in 4 days!",
+                   "Patience, young grasshopper. Just 4 days to go.",
+                   "We're already planning your 21st birthday party... in 4 days.",
+                   "Four days from now, the world is your oyster. For now, it's a waiting game.",
+                   "The wait is almost over. Just 4 days to go!",
+                   "Almost a week away! The finish line is in sight.",
+                   "Just a few more days! We'll be here when you get back.",
+                   "You're in the home stretch. See you in 4 days!",
+                   "The wait is getting shorter. Only 4 days left!",
+                   "Just four more days until you're officially 21.",
+                   "The final days of waiting. You've got this!",
+                   "Four more sunrises and then it's time to celebrate!",
+                   "Patience, the countdown is on!",
+                   "We're looking forward to seeing you in 4 days.",
+                   "Just a little bit longer. Four days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Four more days of counting. You're almost there!",
+                ],
+                '5': [
+                   "Just 5 days to go! The finish line is in sight.",
+                   "Five more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 5 days!",
+                   "Patience is a virtue, and you're almost a saint. 5 days to go!",
+                   "The countdown continues! Just 5 more days until the big 21.",
+                   "Five more days, five more sunsets, and then it's time to celebrate!",
+                   "We're keeping the bar warm for you. See you in 5 days!",
+                   "The wait is almost over. Just 5 more days!",
+                   "You're in the final stretch! Come back in 5 days.",
+                   "Just 5 days left until you're officially of legal age. We're waiting for you!",
+                   "The final week is here! Just 5 more days to go.",
+                   "Five more days of counting down. You're almost there!",
+                   "Good things come to those who wait. In this case, 5 days.",
+                   "The light is at the end of the tunnel. Just five days away!",
+                   "You've waited this long, what's five more days?",
+                   "The countdown is on! Five days to go!",
+                   "The wait is almost over. We'll see you in 5 days!",
+                   "Five more days and you're good to go. The celebration is near!",
+                   "Patience, the big 21 is just around the corner!",
+                   "The final week is here! Don't worry, we're counting with you!",
+                ],
+                '6': [
+                   "Just 6 days to go! The wait is almost over.",
+                   "Six days. Almost a week! You can do it.",
+                   "The final week has begun. See you in 6 days!",
+                   "Six more days and you're good to go. We're counting with you!",
+                   "You've waited 20 years, 364 days. What's 6 more? See you soon!",
+                   "Patience is a virtue, and you're about to be rewarded. See you in 6 days!",
+                   "The clock is ticking down. Just 6 more days!",
+                   "The wait is almost over. You're in the final week!",
+                   "Almost a week away! The countdown is getting real.",
+                   "Six more sunrises until your 21st birthday. We'll be here for you!",
+                   "The wait is almost over. Come back in 6 days!",
+                   "You're in the final stretch! Six more days to go!",
+                   "Just a little bit longer. Six more days!",
+                   "Six more days of counting. You're almost there!",
+                   "The countdown is on! Just 6 more days until the big 21.",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Patience, the big 21 is just around the corner!",
+                   "You've waited for this moment for so long. Just a little more time!",
+                   "Almost a legend! Just a few more moments until you're 21.",
+                   "We've got your spot ready! Just waiting for your 21st birthday to arrive.",
+                ],
+                '7': [
+                   "Just a week away! The countdown is on.",
+                   "One more week to go! We're saving a spot for you.",
+                   "Seven days and the wait is over. We're looking forward to seeing you!",
+                   "The final week is here. Don't worry, we're counting with you!",
+                   "Just 7 days left until you can celebrate with us.",
+                   "One week from today, you're good to go!",
+                   "You're in the home stretch. One more week and you're there!",
+                   "The final seven days. It's time to get excited!",
+                   "Patience, young grasshopper. Just 7 days to go!",
+                   "You've waited this long, what's one more week? See you soon!",
+                   "The finish line is in sight. Just one more week!",
+                   "You're so close! Only 7 more days to go.",
+                   "The anticipation is building. Just one more week!",
+                   "The wait is almost over. Come back in 7 days!",
+                   "Seven more days of counting. You can do it!",
+                   "The countdown is on! Just 7 more days until the big 21.",
+                   "You've almost made it. Just one more week to go!",
+                   "One week from now, you'll be celebrating with us!",
+                   "The final week has begun. We're getting ready for you!",
+                   "You're on the final stretch! Come back in 7 days.",
+                ],
+                '8': [
+                   "Just 8 days to go! The wait is almost over.",
+                   "Eight more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 8 days!",
+                   "The countdown continues! Just 8 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 8 days!",
+                   "The wait is almost over. Just 8 more days!",
+                   "You're in the final stretch! Come back in 8 days.",
+                   "Just 8 days left until you're officially of legal age. We're waiting for you!",
+                   "Eight more days. The excitement is building!",
+                   "Hold on a little longer. Just 8 days to go!",
+                   "You've waited this long, what's eight more days?",
+                   "The light is at the end of the tunnel. Just eight days away!",
+                   "The countdown is on! Eight days to go!",
+                   "The wait is getting shorter. Only 8 days left!",
+                   "Eight more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 8 days.",
+                   "Just a little bit longer. Eight days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Eight more days of counting. You're almost there!",
+                ],
+                '9': [
+                   "Just 9 days to go! The wait is almost over.",
+                   "Nine more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 9 days!",
+                   "The countdown continues! Just 9 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 9 days!",
+                   "The wait is almost over. Just 9 more days!",
+                   "You're in the final stretch! Come back in 9 days.",
+                   "Just 9 days left until you're officially of legal age. We're waiting for you!",
+                   "Nine more days. The excitement is building!",
+                   "Hold on a little longer. Just 9 days to go!",
+                   "The light is at the end of the tunnel. Just nine days away!",
+                   "The countdown is on! Nine days to go!",
+                   "The wait is getting shorter. Only 9 days left!",
+                   "Nine more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 9 days.",
+                   "Just a little bit longer. Nine days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Nine more days of counting. You're almost there!",
+                   "You've waited this long, what's nine more days?",
+                ],
+                '10': [
+                   "Just 10 days to go! The wait is almost over.",
+                   "Ten more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 10 days!",
+                   "The countdown continues! Just 10 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 10 days!",
+                   "The wait is almost over. Just 10 more days!",
+                   "You're in the final stretch! Come back in 10 days.",
+                   "Just 10 days left until you're officially of legal age. We're waiting for you!",
+                   "Ten more days. The excitement is building!",
+                   "Hold on a little longer. Just 10 days to go!",
+                   "The light is at the end of the tunnel. Just ten days away!",
+                   "The countdown is on! Ten days to go!",
+                   "The wait is getting shorter. Only 10 days left!",
+                   "Ten more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 10 days.",
+                   "Just a little bit longer. Ten days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Ten more days of counting. You're almost there!",
+                   "You've waited this long, what's ten more days?",
+                ],
+                '11': [
+                   "Just 11 days to go! The wait is almost over.",
+                   "Eleven more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 11 days!",
+                   "The countdown continues! Just 11 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 11 days!",
+                   "The wait is almost over. Just 11 more days!",
+                   "You're in the final stretch! Come back in 11 days.",
+                   "Just 11 days left until you're officially of legal age. We're waiting for you!",
+                   "Eleven more days. The excitement is building!",
+                   "Hold on a little longer. Just 11 days to go!",
+                   "The light is at the end of the tunnel. Just eleven days away!",
+                   "The countdown is on! Eleven days to go!",
+                   "The wait is getting shorter. Only 11 days left!",
+                   "Eleven more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 11 days.",
+                   "Just a little bit longer. Eleven days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Eleven more days of counting. You're almost there!",
+                   "You've waited this long, what's eleven more days?",
+                ],
+                '12': [
+                   "Just 12 days to go! The wait is almost over.",
+                   "Twelve more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 12 days!",
+                   "The countdown continues! Just 12 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 12 days!",
+                   "The wait is almost over. Just 12 more days!",
+                   "You're in the final stretch! Come back in 12 days.",
+                   "Just 12 days left until you're officially of legal age. We're waiting for you!",
+                   "Twelve more days. The excitement is building!",
+                   "Hold on a little longer. Just 12 days to go!",
+                   "The light is at the end of the tunnel. Just twelve days away!",
+                   "The countdown is on! Twelve days to go!",
+                   "The wait is getting shorter. Only 12 days left!",
+                   "Twelve more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 12 days.",
+                   "Just a little bit longer. Twelve days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twelve more days of counting. You're almost there!",
+                   "You've waited this long, what's twelve more days?",
+                ],
+                '13': [
+                   "Just 13 days to go! The wait is almost over.",
+                   "Thirteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 13 days!",
+                   "The countdown continues! Just 13 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 13 days!",
+                   "The wait is almost over. Just 13 more days!",
+                   "You're in the final stretch! Come back in 13 days.",
+                   "Just 13 days left until you're officially of legal age. We're waiting for you!",
+                   "Thirteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 13 days to go!",
+                   "The light is at the end of the tunnel. Just thirteen days away!",
+                   "The countdown is on! Thirteen days to go!",
+                   "The wait is getting shorter. Only 13 days left!",
+                   "Thirteen more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 13 days.",
+                   "Just a little bit longer. Thirteen days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Thirteen more days of counting. You're almost there!",
+                   "You've waited this long, what's thirteen more days?",
+                ],
+                '14': [
+                   "Just 14 days to go! The wait is almost over.",
+                   "Fourteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 14 days!",
+                   "The countdown continues! Just 14 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 14 days!",
+                   "The wait is almost over. Just 14 more days!",
+                   "You're in the final stretch! Come back in 14 days.",
+                   "Just 14 days left until you're officially of legal age. We're waiting for you!",
+                   "Fourteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 14 days to go!",
+                   "The light is at the end of the tunnel. Just fourteen days away!",
+                   "The countdown is on! Fourteen days to go!",
+                   "The wait is getting shorter. Only 14 days left!",
+                   "Fourteen more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 14 days.",
+                   "Just a little bit longer. Fourteen days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Fourteen more days of counting. You're almost there!",
+                   "You've waited this long, what's fourteen more days?",
+                ],
+                '15': [
+                   "Just 15 days to go! The wait is almost over.",
+                   "Fifteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 15 days!",
+                   "The countdown continues! Just 15 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 15 days!",
+                   "The wait is almost over. Just 15 more days!",
+                   "You're in the final stretch! Come back in 15 days.",
+                   "Just 15 days left until you're officially of legal age. We're waiting for you!",
+                   "Fifteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 15 days to go!",
+                   "The light is at the end of the tunnel. Just fifteen days away!",
+                   "The countdown is on! Fifteen days to go!",
+                   "The wait is getting shorter. Only 15 days left!",
+                   "Fifteen more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 15 days.",
+                   "Just a little bit longer. Fifteen days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Fifteen more days of counting. You're almost there!",
+                   "You've waited this long, what's fifteen more days?",
+                ],
+                '16': [
+                   "Just 16 days to go! The wait is almost over.",
+                   "Sixteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 16 days!",
+                   "The countdown continues! Just 16 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 16 days!",
+                   "The wait is almost over. Just 16 more days!",
+                   "You're in the final stretch! Come back in 16 days.",
+                   "Just 16 days left until you're officially of legal age. We're waiting for you!",
+                   "Sixteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 16 days to go!",
+                   "The light is at the end of the tunnel. Just sixteen days away!",
+                   "The countdown is on! Sixteen days to go!",
+                   "The wait is getting shorter. Only 16 days left!",
+                   "Sixteen more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 16 days.",
+                   "Just a little bit longer. Sixteen days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Sixteen more days of counting. You're almost there!",
+                   "You've waited this long, what's sixteen more days?",
+                ],
+                '17': [
+                   "Just 17 days to go! The wait is almost over.",
+                   "Seventeen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 17 days!",
+                   "The countdown continues! Just 17 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 17 days!",
+                   "The wait is almost over. Just 17 more days!",
+                   "You're in the final stretch! Come back in 17 days.",
+                   "Just 17 days left until you're officially of legal age. We're waiting for you!",
+                   "Seventeen more days. The excitement is building!",
+                   "Hold on a little longer. Just 17 days to go!",
+                   "The light is at the end of the tunnel. Just seventeen days away!",
+                   "The countdown is on! Seventeen days to go!",
+                   "The wait is getting shorter. Only 17 days left!",
+                   "Seventeen more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 17 days.",
+                   "Just a little bit longer. Seventeen days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Seventeen more days of counting. You're almost there!",
+                   "You've waited this long, what's seventeen more days?",
+                ],
+                '18': [
+                   "Just 18 days to go! The wait is almost over.",
+                   "Eighteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 18 days!",
+                   "The countdown continues! Just 18 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 18 days!",
+                   "The wait is almost over. Just 18 more days!",
+                   "You're in the final stretch! Come back in 18 days.",
+                   "Just 18 days left until you're officially of legal age. We're waiting for you!",
+                   "Eighteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 18 days to go!",
+                   "The light is at the end of the tunnel. Just eighteen days away!",
+                   "The countdown is on! Eighteen days to go!",
+                   "The wait is getting shorter. Only 18 days left!",
+                   "Eighteen more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 18 days.",
+                   "Just a little bit longer. Eighteen days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Eighteen more days of counting. You're almost there!",
+                   "You've waited this long, what's eighteen more days?",
+                ],
+                '19': [
+                   "Just 19 days to go! The wait is almost over.",
+                   "Nineteen more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 19 days!",
+                   "The countdown continues! Just 19 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 19 days!",
+                   "The wait is almost over. Just 19 more days!",
+                   "You're in the final stretch! Come back in 19 days.",
+                   "Just 19 days left until you're officially of legal age. We're waiting for you!",
+                   "Nineteen more days. The excitement is building!",
+                   "Hold on a little longer. Just 19 days to go!",
+                   "The light is at the end of the tunnel. Just nineteen days away!",
+                   "The countdown is on! Nineteen days to go!",
+                   "The wait is getting shorter. Only 19 days left!",
+                   "Nineteen more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 19 days.",
+                   "Just a little bit longer. Nineteen days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Nineteen more days of counting. You're almost there!",
+                   "You've waited this long, what's nineteen more days?",
+                ],
+                '20': [
+                   "Just 20 days to go! The wait is almost over.",
+                   "Twenty more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 20 days!",
+                   "The countdown continues! Just 20 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 20 days!",
+                   "The wait is almost over. Just 20 more days!",
+                   "You're in the final stretch! Come back in 20 days.",
+                   "Just 20 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty more days. The excitement is building!",
+                   "Hold on a little longer. Just 20 days to go!",
+                   "The light is at the end of the tunnel. Just twenty days away!",
+                   "The countdown is on! Twenty days to go!",
+                   "The wait is getting shorter. Only 20 days left!",
+                   "Twenty more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 20 days.",
+                   "Just a little bit longer. Twenty days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty more days?",
+                ],
+                '21': [
+                   "Just 21 days to go! The wait is almost over.",
+                   "Twenty-one more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 21 days!",
+                   "The countdown continues! Just 21 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 21 days!",
+                   "The wait is almost over. Just 21 more days!",
+                   "You're in the final stretch! Come back in 21 days.",
+                   "Just 21 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-one more days. The excitement is building!",
+                   "Hold on a little longer. Just 21 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-one days away!",
+                   "The countdown is on! Twenty-one days to go!",
+                   "The wait is getting shorter. Only 21 days left!",
+                   "Twenty-one more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 21 days.",
+                   "Just a little bit longer. Twenty-one days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-one more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-one more days?",
+                ],
+                '22': [
+                   "Just 22 days to go! The wait is almost over.",
+                   "Twenty-two more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 22 days!",
+                   "The countdown continues! Just 22 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 22 days!",
+                   "The wait is almost over. Just 22 more days!",
+                   "You're in the final stretch! Come back in 22 days.",
+                   "Just 22 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-two more days. The excitement is building!",
+                   "Hold on a little longer. Just 22 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-two days away!",
+                   "The countdown is on! Twenty-two days to go!",
+                   "The wait is getting shorter. Only 22 days left!",
+                   "Twenty-two more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 22 days.",
+                   "Just a little bit longer. Twenty-two days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-two more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-two more days?",
+                ],
+                '23': [
+                   "Just 23 days to go! The wait is almost over.",
+                   "Twenty-three more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 23 days!",
+                   "The countdown continues! Just 23 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 23 days!",
+                   "The wait is almost over. Just 23 more days!",
+                   "You're in the final stretch! Come back in 23 days.",
+                   "Just 23 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-three more days. The excitement is building!",
+                   "Hold on a little longer. Just 23 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-three days away!",
+                   "The countdown is on! Twenty-three days to go!",
+                   "The wait is getting shorter. Only 23 days left!",
+                   "Twenty-three more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 23 days.",
+                   "Just a little bit longer. Twenty-three days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-three more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-three more days?",
+                ],
+                '24': [
+                   "Just 24 days to go! The wait is almost over.",
+                   "Twenty-four more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 24 days!",
+                   "The countdown continues! Just 24 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 24 days!",
+                   "The wait is almost over. Just 24 more days!",
+                   "You're in the final stretch! Come back in 24 days.",
+                   "Just 24 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-four more days. The excitement is building!",
+                   "Hold on a little longer. Just 24 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-four days away!",
+                   "The countdown is on! Twenty-four days to go!",
+                   "The wait is getting shorter. Only 24 days left!",
+                   "Twenty-four more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 24 days.",
+                   "Just a little bit longer. Twenty-four days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-four more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-four more days?",
+                ],
+                '25': [
+                   "Just 25 days to go! The wait is almost over.",
+                   "Twenty-five more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 25 days!",
+                   "The countdown continues! Just 25 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 25 days!",
+                   "The wait is almost over. Just 25 more days!",
+                   "You're in the final stretch! Come back in 25 days.",
+                   "Just 25 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-five more days. The excitement is building!",
+                   "Hold on a little longer. Just 25 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-five days away!",
+                   "The countdown is on! Twenty-five days to go!",
+                   "The wait is getting shorter. Only 25 days left!",
+                   "Twenty-five more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 25 days.",
+                   "Just a little bit longer. Twenty-five days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-five more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-five more days?",
+                ],
+                '26': [
+                   "Just 26 days to go! The wait is almost over.",
+                   "Twenty-six more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 26 days!",
+                   "The countdown continues! Just 26 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 26 days!",
+                   "The wait is almost over. Just 26 more days!",
+                   "You're in the final stretch! Come back in 26 days.",
+                   "Just 26 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-six more days. The excitement is building!",
+                   "Hold on a little longer. Just 26 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-six days away!",
+                   "The countdown is on! Twenty-six days to go!",
+                   "The wait is getting shorter. Only 26 days left!",
+                   "Twenty-six more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 26 days.",
+                   "Just a little bit longer. Twenty-six days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-six more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-six more days?",
+                ],
+                '27': [
+                   "Just 27 days to go! The wait is almost over.",
+                   "Twenty-seven more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 27 days!",
+                   "The countdown continues! Just 27 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 27 days!",
+                   "The wait is almost over. Just 27 more days!",
+                   "You're in the final stretch! Come back in 27 days.",
+                   "Just 27 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-seven more days. The excitement is building!",
+                   "Hold on a little longer. Just 27 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-seven days away!",
+                   "The countdown is on! Twenty-seven days to go!",
+                   "The wait is getting shorter. Only 27 days left!",
+                   "Twenty-seven more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 27 days.",
+                   "Just a little bit longer. Twenty-seven days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-seven more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-seven more days?",
+                ],
+                '28': [
+                   "Just 28 days to go! The wait is almost over.",
+                   "Twenty-eight more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 28 days!",
+                   "The countdown continues! Just 28 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 28 days!",
+                   "The wait is almost over. Just 28 more days!",
+                   "You're in the final stretch! Come back in 28 days.",
+                   "Just 28 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-eight more days. The excitement is building!",
+                   "Hold on a little longer. Just 28 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-eight days away!",
+                   "The countdown is on! Twenty-eight days to go!",
+                   "The wait is getting shorter. Only 28 days left!",
+                   "Twenty-eight more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 28 days.",
+                   "Just a little bit longer. Twenty-eight days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-eight more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-eight more days?",
+                ],
+                '29': [
+                   "Just 29 days to go! The wait is almost over.",
+                   "Twenty-nine more days of counting. You can do it!",
+                   "Just a few more days, and the wait is over. See you in 29 days!",
+                   "The countdown continues! Just 29 more days until the big 21.",
+                   "We're keeping the bar warm for you. See you in 29 days!",
+                   "The wait is almost over. Just 29 more days!",
+                   "You're in the final stretch! Come back in 29 days.",
+                   "Just 29 days left until you're officially of legal age. We're waiting for you!",
+                   "Twenty-nine more days. The excitement is building!",
+                   "Hold on a little longer. Just 29 days to go!",
+                   "The light is at the end of the tunnel. Just twenty-nine days away!",
+                   "The countdown is on! Twenty-nine days to go!",
+                   "The wait is getting shorter. Only 29 days left!",
+                   "Twenty-nine more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 29 days.",
+                   "Just a little bit longer. Twenty-nine days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Twenty-nine more days of counting. You're almost there!",
+                   "You've waited this long, what's twenty-nine more days?",
+                ],
+                '30': [
+                   "Less than a month to go! We're waiting for you.",
+                   "Just 30 days left until you're officially of legal age!",
+                   "The countdown continues! Just 30 more days until the big 21.",
+                   "Thirty more days. The excitement is building!",
+                   "Hold on a little longer. Just 30 days to go!",
+                   "Just a few more weeks, and the wait is over. See you in 30 days!",
+                   "You're in the final stretch! Come back in 30 days.",
+                   "We're keeping the bar warm for you. See you in 30 days!",
+                   "Patience is a virtue, and you're about to be rewarded. See you in 30 days!",
+                   "Thirty more days of counting. You can do it!",
+                   "The wait is getting shorter. Only 30 days left!",
+                   "Thirty more sunrises and then it's time to celebrate!",
+                   "Patience, young grasshopper. The big 21 is just around the corner!",
+                   "We're looking forward to seeing you in 30 days.",
+                   "Just a little bit longer. Thirty days to go!",
+                   "The wait is almost over. We'll be ready for you!",
+                   "Thirty more days of counting. You're almost there!",
+                   "You've waited this long, what's thirty more days?",
+                   "The finish line is in sight. Just one more month to go!",
+                   "Less than a month until you're officially 21. See you soon!"
+                ],
+                'default': "Sorry, you are not yet 21. See you when you're of legal age!",
+                'default_2': "You'll have to wait. See you when you're 21!",
+                'default_3': "Unfortunately, we can't let you in. Please come back when you're of legal age.",
+                'default_4': "We appreciate your visit, but we must ask you to come back when you're of legal age.",
+                'default_5': "Sorry, you're not yet 21. We can't serve you.",
+                'default_6': "You must be 21 to enter. Please come back on your birthday.",
+                'default_7': "We can't let you in until you're 21. Please try again later.",
+                'default_8': "You'll have to wait. It's the law! See you when you're 21.",
+                'default_9': "Sorry, we're unable to serve you. Please come back when you're of legal age.",
+                'default_10': "You must be 21 to enter. Please come back when you're of legal age.",
+                'default_11': "Sorry, we can't let you in. Please come back when you're 21.",
+                'default_12': "You're not yet of legal age. We'll see you on your 21st birthday.",
+                'default_13': "Unfortunately, we can't serve you. Please come back when you're 21.",
+                'default_14': "We appreciate your visit, but we must ask you to come back when you're 21.",
+                'default_15': "Sorry, you're not yet 21. We can't serve you.",
+                'default_16': "You must be 21 to enter. Please come back on your birthday.",
+                'default_17': "We can't let you in until you're 21. Please try again later.",
+                'default_18': "You'll have to wait. It's the law! See you when you're 21.",
+                'default_19': "Sorry, we're unable to serve you. Please come back when you're 21.",
+                'default_20': "You must be 21 to enter. Please come back when you're 21."
+           };
+
+           const approvedResponses = [
+               "Enjoy your night! 🎉",
+               "Welcome, it's a pleasure to serve you!",
+               "Cheers! You're good to go.",
+               "All clear! Come on in.",
+               "Perfect. We've been expecting you.",
+               "Enjoy your night! The bar is waiting for you.",
+               "Welcome to TA Station, it's a pleasure to have you!",
+               "Cheers! The drinks are on us tonight.",
+               "All clear! Come on in and have a seat.",
+               "Perfect. We've been expecting you. We have a great night planned!",
+               "Welcome to TA Station, it's a pleasure to serve you tonight!",
+               "Cheers! You're good to go. The night is young!",
+               "All clear! Come on in and have a great time!",
+               "Perfect. We've been expecting you. We've got a great table for you!",
+               "Enjoy your night! The music is just starting.",
+               "Welcome, it's a pleasure to have you here tonight!",
+               "Cheers! The bar is open for you!",
+               "All clear! Come on in and celebrate with us!",
+               "Perfect. We've been expecting you. The party's just starting!",
+               "Welcome to TA Station, we're so glad to have you here!"
+           ];
+           
+           // --- LANGUAGE SWITCHER ---
            enBtn.addEventListener('click', () => setLanguage('en'));
            thBtn.addEventListener('click', () => setLanguage('th'));
+           
            function setLanguage(lang) {
                currentLang = lang;
                body.className = `lang-${lang}`;
                enBtn.classList.toggle('active', lang === 'en');
                thBtn.classList.toggle('active', lang === 'th');
-               initialSetup();
+               initialSetup(); 
            }
+
+           // --- FONT SIZE SWITCHER ---
+           fontSizeSelect.addEventListener('change', (e) => {
+               verbiageContainer.className = `verbiage-container ${e.target.value}`;
+           });
+           
+           // --- INITIALIZATION ---
            function initialSetup() {
-               const yearText = currentLang === 'en' ? 'Year' : 'ปี';
-               const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
-               const dayText = currentLang === 'en' ? 'Day' : 'วัน';
-               yearSelect.innerHTML = `<option value="" selected disabled>${yearText}</option>`;
-               for (let i = cutoffYear; i >= today.getFullYear() - 100; i--) {
-                   yearSelect.add(new Option(i, i));
+               const cutoffDateFormatted = cutoffDate.toLocaleDateString('en-US', {
+                   year: 'numeric', month: 'long', day: 'numeric'
+               });
+               legalDateText.innerHTML = `
+                   <span class="en">Legal to drink if born on or before <br/><strong>${cutoffDateFormatted}</strong></span>
+                   <span class="th">สามารถดื่มได้หากเกิดในหรือก่อนวันที่ <br/><strong>${cutoffDateFormatted}</strong></span>
+               `;
+               
+               yearSelect.innerHTML = `<option value="" disabled selected>Year</option>`;
+               for (let i = today.getFullYear(); i >= 1920; i--) {
+                   const option = new Option(i, i);
+                   if (i === cutoffYear) {
+                       option.selected = true;
+                   }
+                   yearSelect.add(option);
                }
-               monthSelect.innerHTML = `<option value="" selected disabled>${monthText}</option>`;
-               daySelect.innerHTML = `<option value="" selected disabled>${dayText}</option>`;
-               monthSelect.disabled = true;
-               daySelect.disabled = true;
-               resetUI();
+               
+               populateMonths();
+               populateDays();
+               
+               handleDateChange();
            }
-           initialSetup();
-           yearSelect.addEventListener('change', handleYearChange);
-           monthSelect.addEventListener('change', handleMonthChange);
-           daySelect.addEventListener('change', handleDayChange);
-           function handleYearChange() {
-               const year = parseInt(yearSelect.value);
-               resetMonthAndDay();
-               if (year < cutoffYear) {
-                   setApproved();
-                   populateMonths(11);
-               } else {
-                   resetUI();
-                   populateMonths(cutoffMonth);
-               }
-           }
-           function handleMonthChange() {
-               const year = parseInt(yearSelect.value);
-               const month = parseInt(monthSelect.value);
-               resetDay();
-               if (year === cutoffYear && month === cutoffMonth) {
-                   // --- THIS IS THE MODIFIED LINE ---
-                   underageFlag.style.opacity = '0.4'; // Changed from 0.2
-                   populateDays(year, month, cutoffDay);
-               } else {
-                   underageFlag.style.opacity = '0';
-                   populateDays(year, month, 31);
-               }
-               handleDayChange();
-           }
-           function handleDayChange() {
+           
+           // --- EVENT LISTENERS ---
+           yearSelect.addEventListener('change', () => {
+               populateMonths();
+               populateDays();
+               handleDateChange();
+           });
+           monthSelect.addEventListener('change', () => {
+               populateDays();
+               handleDateChange();
+           });
+           daySelect.addEventListener('change', handleDateChange);
+           
+           // --- HANDLER FUNCTION ---
+           function handleDateChange() {
                const year = parseInt(yearSelect.value);
                const month = parseInt(monthSelect.value);
                const day = parseInt(daySelect.value);
-               if (isNaN(day)) {
-                    if(year === cutoffYear && month === cutoffMonth) {
-                       underageFlag.style.opacity = '0.4'; // Also changed here for consistency
-                    } else {
-                       resetUI();
-                    }
+               
+               daySelect.disabled = isNaN(month);
+
+               // Handle Year selection first
+               if (!isNaN(year) && year < cutoffYear) {
+                   setApproved(null);
                    return;
                }
-               if (year < cutoffYear ||
-                  (year === cutoffYear && month < cutoffMonth) ||
-                  (year === cutoffYear && month === cutoffMonth && day <= cutoffDay)) {
-                   setApproved();
-               } else {
-                   setDenied();
+               if (!isNaN(year) && year > cutoffYear) {
+                   setDenied(null);
+                   return;
                }
+
+               // Handle Month selection for cutoff year
+               if (!isNaN(year) && year === cutoffYear) {
+                   if (!isNaN(month) && month < cutoffMonth) {
+                       setApproved(null);
+                       return;
+                   }
+                   if (!isNaN(month) && month > cutoffMonth) {
+                       setDenied(null);
+                       return;
+                   }
+               }
+               
+               // Handle Day selection for cutoff date
+               if (!isNaN(year) && year === cutoffYear && !isNaN(month) && month === cutoffMonth) {
+                   if (isNaN(day)) {
+                       setNeutral();
+                       return;
+                   }
+                   const selectedDate = new Date(year, month, day);
+
+                   if (selectedDate > cutoffDate) {
+                       const diffTime = selectedDate.getTime() - cutoffDate.getTime();
+                       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                       setDenied(diffDays);
+                   } else if (selectedDate.getTime() === cutoffDate.getTime()) {
+                       setApproved('birthday');
+                   } else {
+                       setApproved(null);
+                   }
+                   return;
+               }
+
+               setNeutral();
            }
-           function populateMonths(lastAllowedMonth) {
-               resetMonthAndDay();
-               const names = monthNames[currentLang];
-               for (let i = 0; i <= lastAllowedMonth; i++) {
-                   const monthNumber = String(i + 1).padStart(2, '0');
-                   const optionText = `${monthNumber}-${names[i]}`;
-                   monthSelect.add(new Option(optionText, i));
+           
+           // --- HELPER & UI FUNCTIONS ---
+           function populateMonths() {
+               const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
+               monthSelect.innerHTML = `<option value="" disabled selected>${monthText}</option>`;
+               for (let i = 0; i < 12; i++) {
+                   const displayMonthNames = monthNames[currentLang];
+                   const optionText = `${i + 1}-${displayMonthNames[i]}`;
+                   const option = new Option(optionText, i);
+                   if (i === cutoffMonth && parseInt(yearSelect.value) === cutoffYear) {
+                       option.selected = true;
+                   }
+                   monthSelect.add(option);
                }
                monthSelect.disabled = false;
            }
-           function populateDays(year, month, lastAllowedDay) {
-               resetDay();
-               const daysInMonth = new Date(year, month + 1, 0).getDate();
-               const limit = Math.min(daysInMonth, lastAllowedDay);
-               for (let i = 1; i <= limit; i++) {
-                   daySelect.add(new Option(i, i));
-               }
-               daySelect.disabled = false;
-           }
-           function setApproved() {
-               resultDiv.className = 'result-display approved';
-               const text = currentLang === 'en' ? 'APPROVED ✅' : 'ผ่าน ✅';
-               resultDiv.innerHTML = text;
-           }
-           function setDenied() {
-               resultDiv.className = 'result-display denied';
-               resultDiv.innerHTML = `<span id="underage-flag" style="opacity: 1;"><span class="en">UNDERAGE</span><span class="th">อายุไม่ถึง</span></span>`;
-           }
-           function resetUI() {
-               resultDiv.className = 'result-display';
-               resultDiv.innerHTML = `<span id="underage-flag"><span class="en">UNDERAGE</span><span class="th">อายุไม่ถึง</span></span>`;
-               underageFlag = document.getElementById('underage-flag');
-           }
-           function resetMonthAndDay() {
-               resetUI();
-               const monthText = currentLang === 'en' ? 'Month' : 'เดือน';
-               monthSelect.innerHTML = `<option value="" selected disabled>${monthText}</option>`;
-               monthSelect.disabled = true;
-               resetDay();
-           }
-           function resetDay() {
+           
+           function populateDays() {
+               const year = parseInt(yearSelect.value);
+               const month = parseInt(monthSelect.value);
                const dayText = currentLang === 'en' ? 'Day' : 'วัน';
                daySelect.innerHTML = `<option value="" selected disabled>${dayText}</option>`;
-               daySelect.disabled = true;
+               
+               if (isNaN(year) || isNaN(month)) return;
+               
+               const daysInMonth = new Date(year, month + 1, 0).getDate();
+               for (let i = 1; i <= daysInMonth; i++) {
+                   daySelect.add(new Option(i, i));
+               }
            }
+           
+           function setApproved(type) {
+               resultDiv.className = 'result-display approved';
+               if (type === 'birthday') {
+                   resultDiv.textContent = '🥳 HAPPY BIRTHDAY! 🎉';
+               } else {
+                   const randomResponse = approvedResponses[Math.floor(Math.random() * approvedResponses.length)];
+                   resultDiv.textContent = randomResponse;
+               }
+           }
+           
+           function setDenied(daysLeft) {
+               resultDiv.className = 'result-display denied';
+               const responseList = deniedResponses[daysLeft] || [deniedResponses['default']];
+               const randomResponse = responseList[Math.floor(Math.random() * responseList.length)];
+               resultDiv.textContent = randomResponse;
+           }
+           
+           function setNeutral() {
+               resultDiv.className = 'result-display';
+               resultDiv.textContent = '';
+           }
+           
+           initialSetup();
        });
 </script>
 </body>
