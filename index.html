@@ -1147,6 +1147,26 @@
            
            initialSetup();
        });
+       // Array of your 9 background image filenames
+       const backgroundImages = [
+           "TAStation-1.JPG", 
+           "TAStation-2.JPG", 
+           "TAStation-3.JPG", 
+           "TAStation-4.JPG", 
+           "TAStation-5.JPG", 
+           "TAStation-6.JPG", 
+           "TAStation-7.JPG", 
+           "TAStation-8.JPG", 
+           "TAStation-9.JPG"
+       ];
+       
+       // Randomly select one image from the array
+       const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+       const selectedImage = backgroundImages[randomIndex];
+       
+       // Set the body's background image to the randomly selected file
+       document.body.style.backgroundImage = `url("${selectedImage}")`;
+
 </script>
 </body>
 </html>
