@@ -134,9 +134,10 @@ input[type="text"], select {
     border-radius: 12px;
     width: 100%;
     box-sizing: border-box;
-    background-color: #f0f0f0;
+    background-color: #ADD8E6; /* Light Blue */
     --background-color: var(--neutral-color);
-    color: var(--text-color);
+    --color: var(--text-color);
+    color: #000080; /* Navy */
 }
 
 button {
