@@ -134,7 +134,8 @@ input[type="text"], select {
     border-radius: 12px;
     width: 100%;
     box-sizing: border-box;
-    background-color: var(--neutral-color);
+    background-color: #FFFF00;
+    --background-color: var(--neutral-color);
     color: var(--text-color);
 }
 
@@ -170,7 +171,7 @@ button:hover {
 }
 .list-item-distributor {
     font-size: 0.9em;
-    color: #FFFF00;
+    color: #ccc;
     margin-left: 10px;
     opacity: 0.8;
 }
