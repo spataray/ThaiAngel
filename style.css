@@ -134,7 +134,7 @@ input[type="text"], select {
     border-radius: 12px;
     width: 100%;
     box-sizing: border-box;
-    background-color: #FFFF00;
+    background-color: #f0f0f0;
     --background-color: var(--neutral-color);
     color: var(--text-color);
 }
