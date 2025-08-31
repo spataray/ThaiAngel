@@ -1,1 +1,188 @@
+/* Using the color variables from your index.html */
+:root {
+    --background-color: rgba(22, 17, 39, 0.75);
+    --container-color: rgba(0, 0, 0, 0.6);
+    --text-color: #f0f0f0;
+    --primary-color: #e74c3c; /* Neon red */
+    --approved-color: #28a745; /* Green */
+    --denied-color: #e74c3c; /* Neon red */
+    --neutral-color: rgba(255, 255, 255, 0.1);
+    --border-color: #f1c40f; /* Golden yellow */
+    --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Base body style from your index.html */
+body {
+    font-family: 'Poppins', 'Sarabun', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Dark overlay for readability, same as your original */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+/* Styling for the header and navigation */
+header {
+    padding: 1.5rem;
+    background-color: var(--container-color);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px var(--shadow-color);
+    border: 2px solid var(--border-color);
+    text-align: center;
+    margin: 0 auto 20px auto;
+    max-width: 900px;
+}
+
+h1 {
+    margin: 0;
+    font-weight: 700;
+}
+
+nav {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    background-color: var(--neutral-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav a:hover, nav a.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Main content area */
+main {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.page {
+    display: none;
+}
+.page.active {
+    display: grid;
+    gap: 20px;
+}
+/* For screens wider than 600px, show cards side-by-side */
+@media (min-width: 600px) {
+    #page-request, #page-products {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+/* Adapted from your .verifier-container */
+.card {
+    padding: 2rem;
+    background-color: var(--container-color);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px var(--shadow-color);
+    border: 2px solid var(--border-color);
+}
+
+h2 {
+    margin-top: 0;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+p, label {
+    color: #ccc;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+input[type="text"], select {
+    font-size: 1.1rem;
+    font-family: 'Poppins', 'Sarabun', sans-serif;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--neutral-color);
+    color: var(--text-color);
+}
+
+button {
+    padding: 12px 20px;
+    background-color: var(--approved-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.03);
+}
+
+/* List Styling */
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--neutral-color);
+}
+.list-item:last-child {
+    border-bottom: none;
+}
+.list-item-details {
+    font-size: 1.1em;
+}
+.list-item-distributor {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-left: 10px;
+    opacity: 0.8;
+}
+.delete-btn {
+    background-color: var(--denied-color);
+    padding: 8px 12px;
+    font-size: 14px;
+}
+#requests-list:empty::after, #products-list:empty::after {
+    content: "Nothing here yet!";
+    display: block;
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}
 
