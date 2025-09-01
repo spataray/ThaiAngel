@@ -8,79 +8,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
+    <header>...</header>
+    <main>...</main>
 
-    <header>
-        <h1>T.A. Station Liquor Control</h1>
-        <nav>
-            <a href="#" id="nav-request" class="active">Request Order</a>
-            <a href="#" id="nav-products">Manage Products</a>
-            <a href="#" id="nav-settings">Settings</a>
-        </nav>
-    </header>
-
-    <main>
-        <section id="page-request" class="page active">
-            <div class="card">
-                <h2>Request an Item</h2>
-                <form id="request-form">
-                    <label for="product-select">Select a Product:</label>
-                    <select id="product-select" required>
-                        <option value="">--Please choose a product--</option>
-                    </select>
-                    <button type="submit">Add to Order List</button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2>Items to Order</h2>
-                <div id="requests-list">
-                    </div>
-            </div>
-        </section>
-
-        <section id="page-products" class="page">
-            <div class="card">
-                <h2>Add a New Product</h2>
-                <form id="add-product-form">
-                    <label for="product-name">Product Name:</label>
-                    <input type="text" id="product-name" placeholder="e.g., Grey Goose Vodka" required>
-
-                    <label for="product-distributor">Distributor:</label>
-                    <input type="text" id="product-distributor" placeholder="e.g., Paradise Beverages" required>
-                    
-                    <button type="submit">Add Product</button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2>Current Product List</h2>
-                <div id="products-list">
-                    </div>
-            </div>
-        </section>
-
-        <section id="page-settings" class="page">
-            <div class="card">
-                <h2>Share Order List</h2>
-                <p>Generate a plain text version of your current order list, grouped by distributor, to share with any app on your device.</p>
-                <button id="share-requests">Share Order List</button>
-            </div>
-            <div class="card">
-                <h2>Backup Data</h2>
-                <p>Save your product list and current order requests to a file. You can use this file as a backup or to transfer the data to another computer.</p>
-                <button id="backup-data">Download Backup (CSV)</button>
-            </div>
-            <div class="card">
-                <h2>Restore Data</h2>
-                <p>Restore data from a previously saved backup file. This will overwrite any existing data.</p>
-                <button id="restore-data">Restore from Backup (CSV)</button>
-                <input type="file" id="restore-file-input" style="display: none;" accept=".csv">
-            </div>
-        </section>
-    </main>
-
+    <script>
+      // PASTE YOUR FIREBASE CONFIGURATION KEYS HERE
+      const firebaseConfig = {
+        apiKey: "...",
+        authDomain: "...",
+        databaseURL: "...",
+        projectId: "...",
+        storageBucket: "...",
+        messagingSenderId: "...",
+        appId: "..."
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    </script>
+    
     <script src="app.js"></script>
 </body>
 </html>
