@@ -63,11 +63,17 @@
 
         <section id="page-settings" class="page">
             <div class="card">
-                <h2>Settings & Data</h2>
+                <h2>Share Order List</h2>
+                <p>Generate a plain text version of your current order list, grouped by distributor, to share with any app on your device.</p>
+                <button id="share-requests">Share Order List</button>
+            </div>
+            <div class="card">
+                <h2>Backup Data</h2>
                 <p>Save your product list and current order requests to a file. You can use this file as a backup or to transfer the data to another computer.</p>
                 <button id="backup-data">Download Backup (CSV)</button>
             </div>
             <div class="card">
+                <h2>Restore Data</h2>
                 <p>Restore data from a previously saved backup file. This will overwrite any existing data.</p>
                 <button id="restore-data">Restore from Backup (CSV)</button>
                 <input type="file" id="restore-file-input" style="display: none;" accept=".csv">
@@ -78,4 +84,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-
