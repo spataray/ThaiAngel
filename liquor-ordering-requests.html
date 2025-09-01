@@ -1,1 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>T.A. Station - Liquor Ordering</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>T.A. Station Liquor Control</h1>
+        <nav>
+            <a href="#" id="nav-request" class="active">Request Order</a>
+            <a href="#" id="nav-products">Manage Products</a>
+            <a href="#" id="nav-settings">Settings</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="page-request" class="page active">
+            </section>
+
+        <section id="page-products" class="page">
+            </section>
+
+        <section id="page-settings" class="page">
+            <div class="card">
+                <h2>Share Order List</h2>
+                <p>Generate a plain text version of your current order list, grouped by distributor, to share with any app on your device.</p>
+                <button id="share-requests">Share Order List</button>
+            </div>
+            <div class="card">
+                <h2>Backup Data</h2>
+                <p>Copy your product list and current order requests to the clipboard. Paste this text into a notes app or email to save it.</p>
+                <button id="backup-data">Copy Backup to Clipboard</button>
+            </div>
+            <div class="card">
+                <h2>Restore Data</h2>
+                <p>Restore data from a previously saved backup text. This will overwrite any existing data on this device.</p>
+                <button id="restore-data">Restore from Pasted Text</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
 
