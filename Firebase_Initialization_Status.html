@@ -33,6 +33,7 @@
     <!-- Firebase SDKs - make sure to use the latest versions -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"; // Import getFirestore
       import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
       // Your Firebase configuration
@@ -61,7 +62,7 @@ const app = initializeApp(firebaseConfig);
       try {
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        //const db = getFirestore(app);
+        const db = getFirestore(app);
         const auth = getAuth(app); // Example of getting a service
         
         statusElement.textContent = "Success! Firebase has been initialized correctly.";
