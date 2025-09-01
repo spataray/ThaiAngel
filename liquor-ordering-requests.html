@@ -28,24 +28,8 @@
 
     <script>
       // PASTE YOUR FIREBASE CONFIGURATION KEYS HERE
-      // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD3K1ITOltWrNHYptqAV7CTYchnyTuvO7w",
-  authDomain: "ta-station-ordering.firebaseapp.com",
-  databaseURL: "https://ta-station-ordering-default-rtdb.firebaseio.com",
-  projectId: "ta-station-ordering",
-  storageBucket: "ta-station-ordering.firebasestorage.app",
-  messagingSenderId: "298390246369",
-  appId: "1:298390246369:web:0002aaacc11f4542b878a0"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+      const firebaseConfig = { ... };
+      firebase.initializeApp(firebaseConfig);
     </script>
     <script src="app.js"></script>
 </body>
