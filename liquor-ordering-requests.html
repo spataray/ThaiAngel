@@ -24,9 +24,44 @@
 
     <main>
         <section id="page-request" class="page active">
+            <div class="card">
+                <h2>Request an Item</h2>
+                <form id="request-form">
+                    <label for="product-select">Select a Product:</label>
+                    <select id="product-select" required>
+                        <option value="">--Please choose a product--</option>
+                    </select>
+                    <button type="submit">Add to Order List</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Items to Order</h2>
+                <div id="requests-list">
+                    </div>
+            </div>            
             </section>
 
         <section id="page-products" class="page">
+            <div class="card">
+                <h2>Add a New Product</h2>
+                <form id="add-product-form">
+                    <label for="product-name">Product Name:</label>
+                    <input type="text" id="product-name" placeholder="e.g., Grey Goose Vodka" required>
+
+                    <label for="product-distributor">Distributor:</label>
+                    <input type="text" id="product-distributor" placeholder="e.g., Paradise Beverages" required>
+                    
+                    <button type="submit">Add Product</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Current Product List</h2>
+                <div id="products-list">
+                    </div>
+            </div>
+           
             </section>
 
         <section id="page-settings" class="page">
