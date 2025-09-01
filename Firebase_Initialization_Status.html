@@ -37,15 +37,24 @@
 
       // Your Firebase configuration
       // IMPORTANT: Replace these with your project's actual values.
-      const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        // The projectId field is required to fix the "projectId not provided" error.
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
-      };
+      // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD3K1ITOltWrNHYptqAV7CTYchnyTuvO7w",
+  authDomain: "ta-station-ordering.firebaseapp.com",
+  databaseURL: "https://ta-station-ordering-default-rtdb.firebaseio.com",
+  projectId: "ta-station-ordering",
+  storageBucket: "ta-station-ordering.firebasestorage.app",
+  messagingSenderId: "298390246369",
+  appId: "1:298390246369:web:0002aaacc11f4542b878a0"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
       const statusElement = document.getElementById('status-message');
 
