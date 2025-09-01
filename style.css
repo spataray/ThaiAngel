@@ -188,3 +188,12 @@ button:hover {
     color: #999;
     padding: 20px;
 }
+/* Add this to the end of your style.css file */
+#loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
