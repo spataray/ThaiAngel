@@ -68,6 +68,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app); // Example of getting a service
     </script>
     
     <script src="app.js"></script>
