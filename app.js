@@ -232,7 +232,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-    document.getElementById('backup-data').addEventListener('click', async () => { /* ... */ });
+    document.getElementById('backup-data').addEventListener('click', () => {
+        const backupData = { products: products, requests: requests };
+        const csvContent = "data:text/csv;charset=utf-8," + JSON.stringify(backupData);
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "ta_station_backup.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
     document.getElementById('restore-data').addEventListener('click', () => {
         const backupString = prompt("Please paste your backup data below to restore it to Firebase:");
         if (!backupString) return;
