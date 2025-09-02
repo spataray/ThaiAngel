@@ -104,8 +104,9 @@ input[type="text"], input[type="email"], input[type="password"], select {
     border-radius: 12px;
     width: 100%;
     box-sizing: border-box;
-    background-color: var(--neutral-color);
-    color: var(--text-color);
+    /* Custom colors */
+    background-color: #ADD8E6; /* Light Blue */
+    color: #000080; /* Navy */
 }
 button {
     padding: 12px 20px;
