@@ -1,1 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T.A. Station - Liquor Ordering</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <style> .hidden { display: none !important; } </style>
+</head>
+<body>
+
+    <div id="auth-container">
+        <div class="card" style="max-width: 450px; margin: auto; margin-top: 5vh;">
+            <form id="login-form">
+                <h2>T.A. Station Login</h2>
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" required>
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required>
+                <button type="submit">Sign In</button>
+                <p id="login-error" class="error-text"></p>
+                <p class="auth-toggle">Need an account? <a href="#" id="show-signup">Sign Up</a></p>
+            </form>
+
+            <form id="signup-form" class="hidden">
+                <h2>Create Account</h2>
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" required>
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" required>
+                <button type="submit">Sign Up</button>
+                <p id="signup-error" class="error-text"></p>
+                <p class="auth-toggle">Already have an account? <a href="#" id="show-login">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <header>
+            <h1>T.A. Station Liquor Control</h1>
+            <p id="user-email" style="color: var(--border-color);"></p>
+            <nav>
+                <a href="#" id="nav-request" class="active">Request Order</a>
+                <a href="#" id="nav-products">Manage Products</a>
+                <a href="#" id="nav-settings">Settings</a>
+            </nav>
+            <button id="sign-out-btn" style="background-color: var(--denied-color); margin-top: 15px;">Sign Out</button>
+        </header>
+
+        <main>
+            <section id="page-request" class="page active">
+                <div class="card">
+                    <h2>Request an Item</h2>
+                    <form id="request-form">
+                        <label for="product-select">Select a Product:</label>
+                        <select id="product-select" required>
+                            <option value="">--Please choose a product--</option>
+                        </select>
+                        <button type="submit">Add to Order List</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Items to Order</h2>
+                    <div id="requests-list">
+                        </div>
+                </div>
+            </section>
+
+            <section id="page-products" class="page">
+                <div class="card">
+                    <h2>Add a New Product</h2>
+                    <form id="add-product-form">
+                        <label for="product-name">Product Name:</label>
+                        <input type="text" id="product-name" placeholder="e.g., Grey Goose Vodka" required>
+                        <label for="product-distributor">Distributor:</label>
+                        <input type="text" id="product-distributor" placeholder="e.g., Paradise Beverages" required>
+                        <button type="submit">Add Product</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Current Product List</h2>
+                    <div id="products-list">
+                        </div>
+                </div>
+            </section>
+
+            <section id="page-settings" class="page">
+                <div class="card">
+                    <h2>Share Order List</h2>
+                    <p>Generate a plain text version of your current order list to share with any app on your device.</p>
+                    <button id="share-requests">Share Order List</button>
+                </div>
+                <div class="card">
+                    <h2>Backup Data</h2>
+                    <p>Copy your product list and current order requests to the clipboard. Paste this text into a notes app or email to save it.</p>
+                    <button id="backup-data">Copy Backup to Clipboard</button>
+                </div>
+                <div class="card">
+                    <h2>Restore Data</h2>
+                    <p>Restore data from a previously saved backup text. This will overwrite any existing data on this device.</p>
+                    <button id="restore-data">Restore from Pasted Text</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+      // **IMPORTANT**: PASTE YOUR FIREBASE CONFIGURATION KEYS HERE
+      const firebaseConfig = {
+        apiKey: "AIzaSy...",
+        authDomain: "your-project.firebaseapp.com",
+        databaseURL: "https://your-project.firebaseio.com",
+        projectId: "your-project",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "...",
+        appId: "..."
+      };
+      
+      // This line initializes the connection to your Firebase project
+      firebase.initializeApp(firebaseConfig);
+    </script>
+    
+    <script src="app.js"></script>
+
+</body>
+</html>
 
