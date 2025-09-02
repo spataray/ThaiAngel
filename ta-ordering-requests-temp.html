@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T.A. Station - Liquor Ordering</title>
+    <title>T.A. Station Ordering</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +47,7 @@
 
     <div id="main-content" class="hidden">
         <header>
-            <h1>T.A. Station Liquor Control</h1>
+            <h1>T.A. Station Ordering</h1>
             <p id="user-email" style="color: var(--border-color);"></p>
             <nav>
                 <a href="#" id="nav-request" class="active">Request Order</a>
@@ -114,24 +114,34 @@
         </main>
     </div>
 
-    <script>
-      // **IMPORTANT**: PASTE YOUR FIREBASE CONFIGURATION KEYS HERE
-      const firebaseConfig = {
-        apiKey: "AIzaSy...",
-        authDomain: "your-project.firebaseapp.com",
-        databaseURL: "https://your-project.firebaseio.com",
-        projectId: "your-project",
-        storageBucket: "your-project.appspot.com",
-        messagingSenderId: "...",
-        appId: "..."
-      };
-      
-      // This line initializes the connection to your Firebase project
-      firebase.initializeApp(firebaseConfig);
+<script type="module">
+      // PASTE YOUR FIREBASE CONFIGURATION KEYS HERE
+     // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"; // Import getFirestore
+      import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD3K1ITOltWrNHYptqAV7CTYchnyTuvO7w",
+  authDomain: "ta-station-ordering.firebaseapp.com",
+  databaseURL: "https://ta-station-ordering-default-rtdb.firebaseio.com",
+  projectId: "ta-station-ordering",
+  storageBucket: "ta-station-ordering.firebasestorage.app",
+  messagingSenderId: "298390246369",
+  appId: "1:298390246369:web:0002aaacc11f4542b878a0"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);        
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app); // Example of getting a service
     </script>
     
-    <script src="app.js"></script>
-
+    <script src="app.js" type="module"></script>
 </body>
 </html>
 
