@@ -211,9 +211,84 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- SETTINGS EVENT LISTENERS ---
-    document.getElementById('share-requests').addEventListener('click', async () => { /* ... (Same as before) ... */ });
-    document.getElementById('backup-data').addEventListener('click', async () => { /* ... (Same as before) ... */ });
-    document.getElementById('restore-data').addEventListener('click', () => { /* ... (Same as before) ... */ });
+    // --- SETTINGS (Share, Backup, Restore functionality has no major changes) ---
+    // The backup/restore functions now work with the live Firebase data!
+   document.getElementById('share-requests').addEventListener('click', async () => {
+        if (requests.length === 0) {
+            alert("There are no items in the order list to share.");
+            return;
+        }
+
+        // Group the requests just like in the render function
+        const requestsByDistributor = {};
+        requests.forEach(request => {
+            const product = products.find(p => p.name === request.name);
+            const distributor = product ? product.distributor : 'Unknown Distributor';
+            if (!requestsByDistributor[distributor]) {
+                requestsByDistributor[distributor] = [];
+            }
+            requestsByDistributor[distributor].push(request.name);
+        });
+
+        // Format the grouped list into a clean text string
+        const today = new Date();
+        const dateString = today.toLocaleDateString('en-US'); // e.g., 9/1/2025
+        let shareText = `T.A. Station Liquor Order - ${dateString}\n\n`;
+
+        for (const distributor in requestsByDistributor) {
+            shareText += `--- ${distributor} ---\n`;
+            requestsByDistributor[distributor].forEach(productName => {
+                shareText += `- ${productName}\n`;
+            });
+            shareText += '\n'; // Add a space between distributors
+        }
+
+        // Use the Web Share API if available
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `T.A. Station Ordering Requests`,
+                    text: shareText,
+                });
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        } else {
+            // Fallback for browsers that don't support sharing (like some desktops)
+            try {
+                await navigator.clipboard.writeText(shareText);
+                alert("Order list copied to clipboard! You can now paste it into any app.");
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert("Could not copy the list. Please select and copy it manually.");
+            }
+        }
+    });
+    document.getElementById('backup-data').addEventListener('click', () => {
+        const backupData = { products: products, requests: requests };
+        const csvContent = "data:text/csv;charset=utf-8," + JSON.stringify(backupData);
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "ta_station_backup.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    document.getElementById('restore-data').addEventListener('click', () => {
+        const backupString = prompt("Please paste your backup data below to restore it to Firebase:");
+        if (!backupString) return;
+        try {
+            const restoredData = JSON.parse(backupString);
+            if (restoredData.products && restoredData.requests) {
+                // Instead of saving locally, we push the restored data to Firebase
+                db.ref('products').set(restoredData.products);
+                db.ref('requests').set(restoredData.requests);
+                alert('Data restored successfully! All devices will now be updated.');
+            } else { alert('Invalid backup data format.'); }
+        } catch (error) { alert('Could not restore data.'); }
+    });
+});
 
     function setRandomBackground() {
         const backgroundImages = [
