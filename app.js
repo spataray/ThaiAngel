@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.innerHTML = `
                     <div>
                         <span class="list-item-details">${request.name}</span>
-                        <div class="list-item-meta">${request.requestedBy} / ${formattedDateTime}</div>
+                        <div class="list-item-meta">${request.requestedBy} <br> ${formattedDateTime}</div>
                     </div>
                     <button class="delete-btn" data-name="${request.name}">Ordered / Remove</button>
                 `;
