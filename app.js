@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { alert('Invalid backup data format.'); }
         } catch (error) { alert('Could not restore data.'); }
     });
-});
+
 
     function setRandomBackground() {
         const backgroundImages = [
@@ -306,4 +306,3 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.backgroundImage = `url("${selectedImage}")`;
     }
 });
-
