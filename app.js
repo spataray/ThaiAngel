@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: `T.A. Station Liquor Order`,
+                    title: `T.A. Station Ordering Requests`,
                     text: shareText,
                 });
             } catch (error) {
