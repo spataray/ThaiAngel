@@ -27,6 +27,7 @@
         intervalTime: 5,
         transitionEffect: 'fade',
         showClock: true,
+        clockFormat: '24', // '12' or '24'
         showPhotoInfo: false,
 
         // Auto-timeout settings (only used on index.html)
@@ -155,9 +156,22 @@
         }
 
         const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
+        let hours = now.getHours();
         const minutes = String(now.getMinutes()).padStart(2, '0');
-        clockEl.textContent = `${hours}:${minutes}`;
+
+        let timeString;
+        if (settings.clockFormat === '12') {
+            // 12-hour format with AM/PM
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            timeString = `${hours}:${minutes} ${ampm}`;
+        } else {
+            // 24-hour format
+            timeString = `${String(hours).padStart(2, '0')}:${minutes}`;
+        }
+
+        clockEl.textContent = timeString;
         clockEl.style.display = 'block';
     }
 
@@ -449,6 +463,7 @@
         const intervalInput = document.getElementById('intervalTime');
         const transitionSelect = document.getElementById('transitionEffect');
         const clockCheckbox = document.getElementById('showClock');
+        const clockFormatSelect = document.getElementById('clockFormat');
         const photoInfoCheckbox = document.getElementById('showPhotoInfo');
         const autoScreensaverCheckbox = document.getElementById('enableAutoScreensaver');
         const inactivityTimeoutInput = document.getElementById('inactivityTimeout');
@@ -456,6 +471,7 @@
         if (intervalInput) intervalInput.value = settings.intervalTime;
         if (transitionSelect) transitionSelect.value = settings.transitionEffect;
         if (clockCheckbox) clockCheckbox.checked = settings.showClock;
+        if (clockFormatSelect) clockFormatSelect.value = settings.clockFormat || '24';
         if (photoInfoCheckbox) photoInfoCheckbox.checked = settings.showPhotoInfo;
         if (autoScreensaverCheckbox) autoScreensaverCheckbox.checked = settings.autoScreensaverEnabled;
         if (inactivityTimeoutInput) inactivityTimeoutInput.value = settings.inactivityTimeout;
@@ -465,6 +481,7 @@
         const intervalInput = document.getElementById('intervalTime');
         const transitionSelect = document.getElementById('transitionEffect');
         const clockCheckbox = document.getElementById('showClock');
+        const clockFormatSelect = document.getElementById('clockFormat');
         const photoInfoCheckbox = document.getElementById('showPhotoInfo');
         const autoScreensaverCheckbox = document.getElementById('enableAutoScreensaver');
         const inactivityTimeoutInput = document.getElementById('inactivityTimeout');
@@ -501,6 +518,7 @@
 
         if (transitionSelect) settings.transitionEffect = transitionSelect.value;
         if (clockCheckbox) settings.showClock = clockCheckbox.checked;
+        if (clockFormatSelect) settings.clockFormat = clockFormatSelect.value;
         if (photoInfoCheckbox) settings.showPhotoInfo = photoInfoCheckbox.checked;
         if (autoScreensaverCheckbox) settings.autoScreensaverEnabled = autoScreensaverCheckbox.checked;
 
