@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery</title>
-       <style>
+    <link rel="stylesheet" href="screensaver.css">
+    <style>
         .gallery img {
             width: 100%;
             height: auto;
@@ -14,6 +15,12 @@
      </style>
 </head>
 <body>
+    <!-- Screensaver Controls -->
+    <div class="controls">
+        <button id="screensaverBtn">Start Screensaver</button>
+        <button id="settingsBtn">Settings</button>
+    </div>
+
     <h1>Gallery</h1>
     <div class="gallery">
       <!-- <br><a>TAStation-1.JPG</a><br> -->
@@ -61,5 +68,101 @@
       <!-- <br><a>TAStation-22.JPG</a><br> -->
       <img src="images/TAStation-22.JPG" alt="TA Station 22" style="max-width: 100%; height: auto;">
     </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Screensaver Settings</h2>
+
+            <label>Time per image (seconds):</label>
+            <input type="number" id="intervalTime" value="5" min="1" max="60">
+
+            <label>Transition Effect:</label>
+            <select id="transitionEffect">
+                <option value="fade">Fade</option>
+                <option value="slide">Slide</option>
+                <option value="zoom">Zoom (Ken Burns)</option>
+                <option value="pan-zoom">Pan & Zoom (Smart)</option>
+                <option value="crossfade">Cross Fade</option>
+            </select>
+
+            <label>
+                <input type="checkbox" id="showClock" checked>
+                Show clock
+            </label>
+
+            <label>
+                <input type="checkbox" id="showPhotoInfo">
+                Show photo information
+            </label>
+
+            <button id="saveSettings">Save Settings</button>
+        </div>
+    </div>
+
+    <!-- Screensaver Container -->
+    <div id="screensaverContainer" style="display: none;">
+        <div id="loadingIndicator" class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+        <div id="screensaverClock"></div>
+        <div id="screensaverImage"></div>
+        <div id="photoInfo" class="photo-info">
+            <span id="photoName"></span>
+            <span id="photoCount"></span>
+        </div>
+    </div>
+
+    <!-- Screensaver JavaScript -->
+    <script src="screensaver.js"></script>
+    <script>
+        // Initialize screensaver with images from gallery
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = Array.from(document.querySelectorAll('.gallery img')).map(img => img.src);
+            TAScreensaver.initialize(images);
+
+            // Start screensaver button
+            document.getElementById('screensaverBtn').addEventListener('click', function() {
+                TAScreensaver.start();
+            });
+
+            // Click anywhere on screensaver to exit
+            document.getElementById('screensaverContainer').addEventListener('click', function() {
+                TAScreensaver.stop();
+            });
+
+            // Settings modal controls
+            const modal = document.getElementById('settingsModal');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const closeBtn = document.querySelector('.close');
+            const saveBtn = document.getElementById('saveSettings');
+
+            // Open settings
+            settingsBtn.addEventListener('click', function() {
+                TAScreensaver.populateSettingsModal();
+                modal.style.display = 'block';
+            });
+
+            // Close modal with X
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Save settings
+            saveBtn.addEventListener('click', function() {
+                if (TAScreensaver.saveSettingsFromModal()) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
