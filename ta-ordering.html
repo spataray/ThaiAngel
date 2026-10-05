@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T.A. Station Ordering</title>
+    <title id="ordering-doc-title">T.A. Station Ordering</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
     <div id="auth-container">
         <div class="card" style="max-width: 450px; margin: auto; margin-top: 5vh;">
             <form id="login-form">
-                <h2>T.A. Station Login</h2>
+                <h2 id="login-title">T.A. Station Login</h2>
                 <label for="login-username">Username</label>
                 <input type="text" id="login-username" required>
                 <button type="submit">Sign In</button>
@@ -39,7 +39,7 @@
 
     <div id="main-content" class="hidden">
         <header>
-            <h1>T.A. Station Ordering</h1>
+            <h1 id="ordering-title">T.A. Station Ordering</h1>
             <p id="user-display" style="color: var(--border-color);"></p>
             <nav>
                 <a href="#" id="nav-request" class="active">Request Order</a>
@@ -88,6 +88,14 @@
 
             <section id="page-settings" class="page">
                 <div class="card">
+                    <h2>Establishment / Venue Name</h2>
+                    <p>Set the name of your venue shown on headers, share reports, and notifications.</p>
+                    <div style="margin-bottom: 12px;">
+                        <input type="text" id="setting-venue-name" placeholder="e.g. T.A. Station" style="width:100%; max-width:350px; padding:10px; border-radius:8px; border:1px solid #444; background:#222; color:#fff; font-size:1rem; box-sizing:border-box;">
+                    </div>
+                    <button id="save-venue-name-btn" style="background:#f1c40f; color:#000; font-weight:bold; border:none; padding:10px 18px; border-radius:8px; cursor:pointer;">Save Venue Name</button>
+                </div>
+                <div class="card">
                     <h2>Share Order List</h2>
                     <p>Generate a plain text version of your current order list to share with any app on your device.</p>
                     <button id="share-requests">Share Order List</button>
@@ -106,6 +114,9 @@
         </main>
     </div>
 
-    <script src="app3.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

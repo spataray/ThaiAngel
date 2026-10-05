@@ -1,0 +1,19 @@
+{
+  "name": "thaiangel",
+  "version": "1.0.0",
+  "description": "Age verifier and screensaver for T.A. Station",
+  "main": "index.html",
+  "scripts": {
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint index.html app.js screensaver.js gallery.html ta-ordering.html",
+    "lint:css": "stylelint style.css screensaver.css"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.1.0",
+    "eslint-plugin-html": "^8.1.4",
+    "globals": "^17.4.0",
+    "stylelint": "^17.6.0",
+    "stylelint-config-standard": "^40.0.0"
+  }
+}

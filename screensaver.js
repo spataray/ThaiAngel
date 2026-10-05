@@ -9,7 +9,7 @@
     // ============================================
     // CONFIGURATION
     // ============================================
-    const CONFIG = {
+    var CONFIG = {
         MIN_INTERVAL: 1,
         MAX_INTERVAL: 60,
         DEFAULT_INTERVAL: 5,
@@ -22,7 +22,10 @@
     // ============================================
     // DEFAULT SETTINGS
     // ============================================
-    const DEFAULT_SETTINGS = {
+    var DEFAULT_SETTINGS = {
+        // Venue / Establishment Name
+        establishmentName: 'T.A. Station',
+
         // Screensaver display settings
         intervalTime: 5,
         transitionEffect: 'fade',
@@ -39,13 +42,20 @@
     // ============================================
     // STATE VARIABLES
     // ============================================
-    let settings = { ...DEFAULT_SETTINGS };
-    let screensaverInterval;
-    let clockInterval;
-    let shuffledImages = [];
-    let currentIndex = 0;
-    let images = [];
-    let preloadedImages = new Map();
+    var settings = {};
+    // Shallow copy DEFAULT_SETTINGS to settings
+    for (var key in DEFAULT_SETTINGS) {
+        if (Object.prototype.hasOwnProperty.call(DEFAULT_SETTINGS, key)) {
+            settings[key] = DEFAULT_SETTINGS[key];
+        }
+    }
+
+    var screensaverInterval;
+    var clockInterval;
+    var shuffledImages = [];
+    var currentIndex = 0;
+    var images = [];
+    var preloadedImages = {}; // Using an object as a simple Map replacement for ES5
 
     // ============================================
     // UTILITY FUNCTIONS
@@ -53,10 +63,12 @@
 
     // Fisher-Yates shuffle algorithm
     function shuffleArray(array) {
-        const shuffled = [...array];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        var shuffled = array.slice();
+        for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
         }
         return shuffled;
     }
@@ -69,7 +81,7 @@
     // Check if localStorage is available
     function isLocalStorageAvailable() {
         try {
-            const test = '__localStorage_test__';
+            var test = '__localStorage_test__';
             localStorage.setItem(test, test);
             localStorage.removeItem(test);
             return true;
@@ -80,7 +92,10 @@
 
     // Check if motion should be reduced
     function shouldReduceMotion() {
-        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (window.matchMedia) {
+            return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        }
+        return false;
     }
 
     // ============================================
@@ -93,10 +108,15 @@
             return;
         }
 
-        const saved = localStorage.getItem(CONFIG.LOCALSTORAGE_KEY);
+        var saved = localStorage.getItem(CONFIG.LOCALSTORAGE_KEY);
         if (saved) {
             try {
-                settings = { ...settings, ...JSON.parse(saved) };
+                var parsed = JSON.parse(saved);
+                for (var key in parsed) {
+                    if (Object.prototype.hasOwnProperty.call(parsed, key)) {
+                        settings[key] = parsed[key];
+                    }
+                }
             } catch (e) {
                 console.error('Failed to parse saved settings:', e);
             }
@@ -104,19 +124,14 @@
     }
 
     function saveSettings() {
-        if (!isLocalStorageAvailable()) {
-            showNotification('Settings cannot be saved (localStorage unavailable)');
-            return false;
+        if (isLocalStorageAvailable()) {
+            try {
+                localStorage.setItem(CONFIG.LOCALSTORAGE_KEY, JSON.stringify(settings));
+            } catch (e) {
+                console.warn('Could not persist settings to localStorage:', e);
+            }
         }
-
-        try {
-            localStorage.setItem(CONFIG.LOCALSTORAGE_KEY, JSON.stringify(settings));
-            return true;
-        } catch (e) {
-            console.error('Failed to save settings:', e);
-            showNotification('Failed to save settings');
-            return false;
-        }
+        return true;
     }
 
     // ============================================
@@ -126,19 +141,23 @@
     function preloadNextImage() {
         if (shuffledImages.length === 0) return;
 
-        // Clear old preloads if we have too many
-        if (preloadedImages.size >= CONFIG.MAX_PRELOAD) {
-            const firstKey = preloadedImages.keys().next().value;
-            preloadedImages.delete(firstKey);
+        // Simple preloadedImages cleanup
+        var keys = [];
+        for (var k in preloadedImages) {
+            if (preloadedImages.hasOwnProperty(k)) keys.push(k);
+        }
+        
+        if (keys.length >= CONFIG.MAX_PRELOAD) {
+            delete preloadedImages[keys[0]];
         }
 
-        const nextIndex = (currentIndex + 1) % shuffledImages.length;
-        const nextSrc = shuffledImages[nextIndex];
+        var nextIndex = (currentIndex + 1) % shuffledImages.length;
+        var nextSrc = shuffledImages[nextIndex];
 
-        if (!preloadedImages.has(nextSrc)) {
-            const img = new Image();
+        if (!preloadedImages[nextSrc]) {
+            var img = new Image();
             img.src = nextSrc;
-            preloadedImages.set(nextSrc, img);
+            preloadedImages[nextSrc] = img;
         }
     }
 
@@ -147,7 +166,7 @@
     // ============================================
 
     function updateClock() {
-        const clockEl = document.getElementById('screensaverClock');
+        var clockEl = document.getElementById('screensaverClock');
         if (!clockEl) return;
 
         if (!settings.showClock) {
@@ -155,20 +174,22 @@
             return;
         }
 
-        const now = new Date();
-        let hours = now.getHours();
-        const minutes = String(now.getMinutes()).padStart(2, '0');
+        var now = new Date();
+        var hours = now.getHours();
+        var mins = now.getMinutes();
+        var minutes = (mins < 10 ? '0' : '') + mins;
 
-        let timeString;
+        var timeString;
         if (settings.clockFormat === '12') {
             // 12-hour format with AM/PM
-            const ampm = hours >= 12 ? 'PM' : 'AM';
+            var ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
             hours = hours ? hours : 12; // 0 should be 12
-            timeString = `${hours}:${minutes} ${ampm}`;
+            timeString = hours + ':' + minutes + ' ' + ampm;
         } else {
             // 24-hour format
-            timeString = `${String(hours).padStart(2, '0')}:${minutes}`;
+            var hStr = (hours < 10 ? '0' : '') + hours;
+            timeString = hStr + ':' + minutes;
         }
 
         clockEl.textContent = timeString;
@@ -192,7 +213,7 @@
     // ============================================
 
     function updatePhotoInfo() {
-        const photoInfoEl = document.querySelector('.photo-info');
+        var photoInfoEl = document.querySelector('.photo-info');
         if (!photoInfoEl) return;
 
         if (!settings.showPhotoInfo) {
@@ -200,13 +221,13 @@
             return;
         }
 
-        const photoNameEl = document.getElementById('photoName');
-        const photoCountEl = document.getElementById('photoCount');
+        var photoNameEl = document.getElementById('photoName');
+        var photoCountEl = document.getElementById('photoCount');
 
         if (photoNameEl && photoCountEl) {
-            const filename = getFilename(shuffledImages[currentIndex]);
+            var filename = getFilename(shuffledImages[currentIndex]);
             photoNameEl.textContent = filename;
-            photoCountEl.textContent = `${currentIndex + 1} of ${shuffledImages.length}`;
+            photoCountEl.textContent = (currentIndex + 1) + ' of ' + shuffledImages.length;
             photoInfoEl.style.display = 'block';
         }
     }
@@ -220,10 +241,10 @@
             return 'fade-transition';
         }
 
-        const effect = settings.transitionEffect;
+        var effect = settings.transitionEffect;
 
         if (effect === 'pan-zoom') {
-            const panZoomVariants = ['pan-zoom-lr', 'pan-zoom-rl', 'pan-zoom-tb', 'pan-zoom-bt'];
+            var panZoomVariants = ['pan-zoom-lr', 'pan-zoom-rl', 'pan-zoom-tb', 'pan-zoom-bt'];
             return panZoomVariants[Math.floor(Math.random() * panZoomVariants.length)];
         }
 
@@ -235,14 +256,14 @@
     // ============================================
 
     function showLoadingIndicator() {
-        const indicator = document.getElementById('loadingIndicator');
+        var indicator = document.getElementById('loadingIndicator');
         if (indicator) {
             indicator.style.display = 'block';
         }
     }
 
     function hideLoadingIndicator() {
-        const indicator = document.getElementById('loadingIndicator');
+        var indicator = document.getElementById('loadingIndicator');
         if (indicator) {
             indicator.style.display = 'none';
         }
@@ -253,10 +274,10 @@
     // ============================================
 
     function showNextImage() {
-        const container = document.getElementById('screensaverImage');
+        var container = document.getElementById('screensaverImage');
         if (!container) return;
 
-        const img = new Image();
+        var img = new Image();
 
         // Error handling for failed image loads
         img.onerror = function() {
@@ -321,10 +342,10 @@
             return;
         }
 
-        const elem = document.documentElement;
+        var elem = document.documentElement;
 
         if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(err => {
+            elem.requestFullscreen()['catch'](function(err) {
                 console.log('Fullscreen request failed:', err);
             });
         } else if (elem.webkitRequestFullscreen) {
@@ -336,7 +357,7 @@
 
     function exitFullscreen() {
         if (document.exitFullscreen) {
-            document.exitFullscreen().catch(err => {
+            document.exitFullscreen()['catch'](function(err) {
                 console.log('Exit fullscreen failed:', err);
             });
         } else if (document.webkitExitFullscreen) {
@@ -351,7 +372,7 @@
     // ============================================
 
     function showNotification(message) {
-        let toast = document.getElementById('toast');
+        var toast = document.getElementById('toast');
 
         // Create toast if it doesn't exist
         if (!toast) {
@@ -364,7 +385,7 @@
         toast.textContent = message;
         toast.className = 'toast show';
 
-        setTimeout(() => {
+        setTimeout(function() {
             toast.className = 'toast';
         }, CONFIG.TOAST_DURATION_MS);
     }
@@ -385,7 +406,7 @@
         currentIndex = 0;
 
         // Show screensaver container
-        const container = document.getElementById('screensaverContainer');
+        var container = document.getElementById('screensaverContainer');
         if (!container) {
             console.error('Screensaver container not found');
             return;
@@ -416,7 +437,7 @@
         stopClock();
 
         // Hide screensaver
-        const container = document.getElementById('screensaverContainer');
+        var container = document.getElementById('screensaverContainer');
         if (container) {
             container.style.display = 'none';
         }
@@ -437,7 +458,7 @@
         // Load saved settings
         loadSettings();
 
-        console.log(`Screensaver initialized with ${images.length} images`);
+        console.log('Screensaver initialized with ' + images.length + ' images');
 
         // Listen for fullscreen change events
         document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -448,7 +469,7 @@
     function handleFullscreenChange() {
         // If user exits fullscreen manually, stop screensaver
         if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-            const container = document.getElementById('screensaverContainer');
+            var container = document.getElementById('screensaverContainer');
             if (container && container.style.display === 'block') {
                 stopScreensaver();
             }
@@ -460,14 +481,16 @@
     // ============================================
 
     function populateSettingsModal(modalId) {
-        const intervalInput = document.getElementById('intervalTime');
-        const transitionSelect = document.getElementById('transitionEffect');
-        const clockCheckbox = document.getElementById('showClock');
-        const clockFormatSelect = document.getElementById('clockFormat');
-        const photoInfoCheckbox = document.getElementById('showPhotoInfo');
-        const autoScreensaverCheckbox = document.getElementById('enableAutoScreensaver');
-        const inactivityTimeoutInput = document.getElementById('inactivityTimeout');
+        var establishmentNameInput = document.getElementById('establishmentName');
+        var intervalInput = document.getElementById('intervalTime');
+        var transitionSelect = document.getElementById('transitionEffect');
+        var clockCheckbox = document.getElementById('showClock');
+        var clockFormatSelect = document.getElementById('clockFormat');
+        var photoInfoCheckbox = document.getElementById('showPhotoInfo');
+        var autoScreensaverCheckbox = document.getElementById('enableAutoScreensaver');
+        var inactivityTimeoutInput = document.getElementById('inactivityTimeout');
 
+        if (establishmentNameInput) establishmentNameInput.value = settings.establishmentName || 'T.A. Station';
         if (intervalInput) intervalInput.value = settings.intervalTime;
         if (transitionSelect) transitionSelect.value = settings.transitionEffect;
         if (clockCheckbox) clockCheckbox.checked = settings.showClock;
@@ -478,34 +501,39 @@
     }
 
     function saveSettingsFromModal() {
-        const intervalInput = document.getElementById('intervalTime');
-        const transitionSelect = document.getElementById('transitionEffect');
-        const clockCheckbox = document.getElementById('showClock');
-        const clockFormatSelect = document.getElementById('clockFormat');
-        const photoInfoCheckbox = document.getElementById('showPhotoInfo');
-        const autoScreensaverCheckbox = document.getElementById('enableAutoScreensaver');
-        const inactivityTimeoutInput = document.getElementById('inactivityTimeout');
+        var establishmentNameInput = document.getElementById('establishmentName');
+        var intervalInput = document.getElementById('intervalTime');
+        var transitionSelect = document.getElementById('transitionEffect');
+        var clockCheckbox = document.getElementById('showClock');
+        var clockFormatSelect = document.getElementById('clockFormat');
+        var photoInfoCheckbox = document.getElementById('showPhotoInfo');
+        var autoScreensaverCheckbox = document.getElementById('enableAutoScreensaver');
+        var inactivityTimeoutInput = document.getElementById('inactivityTimeout');
+
+        if (establishmentNameInput && establishmentNameInput.value.trim()) {
+            settings.establishmentName = establishmentNameInput.value.trim();
+        }
 
         // Validate and update interval time
         if (intervalInput) {
-            let intervalValue = parseInt(intervalInput.value);
+            var intervalValue = parseInt(intervalInput.value);
             if (isNaN(intervalValue) || intervalValue < CONFIG.MIN_INTERVAL) {
                 intervalValue = CONFIG.MIN_INTERVAL;
                 intervalInput.value = CONFIG.MIN_INTERVAL;
                 intervalInput.style.border = '2px solid orange';
-                setTimeout(() => intervalInput.style.border = '1px solid #ddd', 2000);
+                setTimeout(function() { intervalInput.style.border = '1px solid #ddd'; }, 2000);
             } else if (intervalValue > CONFIG.MAX_INTERVAL) {
                 intervalValue = CONFIG.MAX_INTERVAL;
                 intervalInput.value = CONFIG.MAX_INTERVAL;
                 intervalInput.style.border = '2px solid orange';
-                setTimeout(() => intervalInput.style.border = '1px solid #ddd', 2000);
+                setTimeout(function() { intervalInput.style.border = '1px solid #ddd'; }, 2000);
             }
             settings.intervalTime = intervalValue;
         }
 
         // Validate and update inactivity timeout
         if (inactivityTimeoutInput) {
-            let timeoutValue = parseInt(inactivityTimeoutInput.value);
+            var timeoutValue = parseInt(inactivityTimeoutInput.value);
             if (isNaN(timeoutValue) || timeoutValue < 1) {
                 timeoutValue = 1;
                 inactivityTimeoutInput.value = 1;
@@ -522,12 +550,10 @@
         if (photoInfoCheckbox) settings.showPhotoInfo = photoInfoCheckbox.checked;
         if (autoScreensaverCheckbox) settings.autoScreensaverEnabled = autoScreensaverCheckbox.checked;
 
-        // Save to localStorage
-        if (saveSettings()) {
-            showNotification('Settings saved successfully!');
-            return true;
-        }
-        return false;
+        // Save settings to memory and storage
+        saveSettings();
+        showNotification('Settings saved successfully!');
+        return true;
     }
 
     // ============================================
@@ -538,9 +564,26 @@
         initialize: initialize,
         start: startScreensaver,
         stop: stopScreensaver,
-        getSettings: function() { return { ...settings }; },
+        getSettings: function() { 
+            var copy = {};
+            for (var k in settings) {
+                if (settings.hasOwnProperty(k)) copy[k] = settings[k];
+            }
+            return copy;
+        },
         updateSettings: function(newSettings) {
-            settings = { ...settings, ...newSettings };
+            for (var k in newSettings) {
+                if (newSettings.hasOwnProperty(k)) {
+                    settings[k] = newSettings[k];
+                }
+            }
+            saveSettings();
+        },
+        getEstablishmentName: function() {
+            return settings.establishmentName || 'T.A. Station';
+        },
+        setEstablishmentName: function(name) {
+            settings.establishmentName = (name && name.trim()) ? name.trim() : 'T.A. Station';
             saveSettings();
         },
         populateSettingsModal: populateSettingsModal,
